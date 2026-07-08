@@ -73,3 +73,14 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Nested Unity project generated folders
+/[Uu]nity[Pp]roject/[Ll]ibrary/
+/[Uu]nity[Pp]roject/[Tt]emp/
+/[Uu]nity[Pp]roject/[Oo]bj/
+/[Uu]nity[Pp]roject/[Bb]uild/
+/[Uu]nity[Pp]roject/[Bb]uilds/
+/[Uu]nity[Pp]roject/[Ll]ogs/
+/[Uu]nity[Pp]roject/[Uu]ser[Ss]ettings/
+/[Uu]nity[Pp]roject/[Mm]emory[Cc]aptures/
+/[Uu]nity[Pp]roject/[Rr]ecordings/
