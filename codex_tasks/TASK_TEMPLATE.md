@@ -30,7 +30,7 @@ The goal should be specific enough that Codex can complete it without guessing t
 
 Example:
 
-Create a simple Unity runtime blackboard that displays current Structured state, Emergent pressure, and Negotiated BASED choice results.
+Create a simple Unity runtime blackboard that displays current Structured state, Emergent pressure, and Negotiated DPA + BASED choice results.
 
 ---
 
@@ -39,6 +39,7 @@ Create a simple Unity runtime blackboard that displays current Structured state,
 Before starting, read:
 
 - `PROJECT_STATE.md`
+- `docs/Trapstar_Master_System_Architecture.md` when the task touches core systems, DPA, BASED, SEN, assets, info, time, or runtime AI.
 
 Relevant design principle:
 
@@ -46,13 +47,23 @@ Trapstar the Demo uses the Structured / Emergent / Negotiated loop.
 
 - **Structured** = hard-tracked state such as time, money, items, BASED stats, player energy/health, clues, and concrete game values.
 - **Emergent** = pressure such as rumors, reputation, faction goals, personal NPC goals, police heat, scarcity, and social consequences.
-- **Negotiated** = player choice through the BASED system: Belligerence, Aggression, Sociability, Empathy, and Deception.
+- **Negotiated** = player choice through the Deal / Pressure / Ask frame, colored by BASED traits and Vibes.
+
+DPA is not an ordered loop. The player does not cycle through Deal, then Pressure, then Ask. DPA is the recurring strategic choice frame at meaningful decision points.
+
+DPA maps symbolically to SEN:
+
+```text
+Deal     = Logos / Structured / hard reality
+Pressure = Pathos / Emergent / dynamic force
+Ask      = Ethos / Negotiated / social choice
+```
 
 Every implementation should support this loop:
 
 1. Structured state defines the situation.
 2. Emergent pressure makes the situation unstable.
-3. The player Negotiates through BASED choices.
+3. The player chooses a DPA frame, colored by a BASED approach.
 4. The result changes Structured state.
 5. New Emergent pressure appears.
 
@@ -68,6 +79,7 @@ Required:
 
 Optional task-specific files:
 
+- `docs/Trapstar_Master_System_Architecture.md`
 - `docs/...`
 - `agent_specs/...`
 - `design_packets/...`
@@ -120,7 +132,10 @@ Example:
 - Display current day and time.
 - Display police heat.
 - Display faction pressure values.
-- Display last BASED choice.
+- Display last DPA frame.
+- Display last BASED trait or Vibe.
+- Display last negotiation target.
+- Display last negotiation result.
 - Log state changes to the Unity console.
 - Allow simple manual test buttons in the scene.
 
@@ -140,7 +155,7 @@ What pressure, reaction, or changing situation does this task create, expose, or
 
 ### Negotiated
 
-What player choice, BASED interaction, or consequence does this task create, expose, or modify?
+What player choice, DPA frame, BASED interaction, or consequence does this task create, expose, or modify?
 
 ---
 
@@ -155,11 +170,13 @@ Include relevant requirements such as:
 - Reason strings explaining why a value changed.
 - Test buttons or inspector-accessible test values.
 - Debug-only hidden information when useful.
+- Last DPA frame when a player-facing choice is involved.
+- Last BASED trait or Vibe when a player-facing choice is involved.
 
 Example:
 
 ```text
-Police Heat changed from 20 to 35. Reason: Aggressive BASED choice in public location.
+Police Heat changed from 20 to 35. Reason: Pressure frame + Menacing BASED Vibe used in public location.
 ```
 
 ---
@@ -174,9 +191,11 @@ Example:
 2. Open the test scene.
 3. Press Play.
 4. Confirm the debug panel appears.
-5. Click the “Increase Police Heat” test button.
-6. Confirm the value updates on screen.
-7. Confirm a console log explains the change.
+5. Click the “Apply Pressure” test button.
+6. Confirm the Last DPA frame updates to `Pressure`.
+7. Confirm the Last BASED Vibe updates to the selected test Vibe.
+8. Confirm the relevant state value updates on screen.
+9. Confirm a console log explains the change.
 
 ---
 
@@ -191,6 +210,7 @@ This task is complete only when:
 - The feature can be tested using the Unity Test Steps.
 - No unrelated systems were expanded.
 - The Structured / Emergent / Negotiated purpose is clear.
+- Any player-facing choice work clearly separates DPA frame from BASED approach.
 
 ---
 
@@ -219,6 +239,7 @@ After approval, Codex should:
 - Avoid adding external dependencies.
 - Include comments where they help future iteration.
 - Preserve the project’s current direction from `PROJECT_STATE.md`.
+- Preserve the distinction between SEN, DPA, and BASED when touching gameplay choice logic.
 
 ---
 
@@ -232,5 +253,6 @@ After implementation, Codex should report:
 4. Any known limitations.
 5. Any recommended next task.
 6. Whether the task changed Structured, Emergent, or Negotiated systems.
+7. Whether the task introduced or changed any DPA frame or BASED approach behavior.
 
 ---
