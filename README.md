@@ -24,7 +24,7 @@ Phaser presents the resolved result.
 
 The project is currently defining its modular architecture and focused system contracts before gameplay implementation begins.
 
-There is no active implementation task. The preserved Phaser foundation task is paused until its required DPA, BASED, Information, TIME, resolver, runtime-state, state-transition, and outcome contracts are ready.
+There is no active implementation task. The preserved Phaser foundation task is paused until every required interaction, runtime, infrastructure, and presentation contract is ready for its selected slice. Conditional modules such as REP, HEAT, and seeded randomness must be explicitly included or excluded.
 
 ## Current technical direction
 
@@ -37,12 +37,18 @@ Commands change the world.
 Events report what changed.
 ```
 
+## Three separate status questions
+
+- **Demo Default Activation** — recorded in the System Registry; describes the intended course-demo architecture.
+- **Current production status** — recorded in `PROJECT_STATE.md`; describes what work is active, paused, blocked, or unscheduled now.
+- **Action-specific participation** — recorded in Resolver Contracts; describes which modules are required, optional, or not consulted for one action.
+
 ## Read first
 
 1. [`PROJECT_STATE.md`](PROJECT_STATE.md) — current phase, blockers, and documentation priorities.
 2. [`docs/Trapstar_Master_System_Architecture.md`](docs/Trapstar_Master_System_Architecture.md) — canonical high-level architecture truth.
-3. [`docs/architecture/Trapstar_System_Registry.md`](docs/architecture/Trapstar_System_Registry.md) — module identity, classification, maturity, activation, and authority.
-4. [`docs/architecture/Trapstar_Module_Contract_Standard.md`](docs/architecture/Trapstar_Module_Contract_Standard.md) — required contract profiles and module-boundary rules.
+3. [`docs/architecture/Trapstar_System_Registry.md`](docs/architecture/Trapstar_System_Registry.md) — module identity, classification, maturity, Demo Default Activation, and authority.
+4. [`docs/architecture/Trapstar_Module_Contract_Standard.md`](docs/architecture/Trapstar_Module_Contract_Standard.md) — required contract profiles, activation scopes, shared-type ownership, and module-boundary rules.
 5. [`codex_tasks/TASK_TEMPLATE.md`](codex_tasks/TASK_TEMPLATE.md) — required structure for bounded Codex work orders.
 6. [`codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md`](codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md) — preserved future Phaser task, currently paused.
 
