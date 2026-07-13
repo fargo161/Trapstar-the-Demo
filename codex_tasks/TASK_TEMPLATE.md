@@ -1,8 +1,8 @@
 # Codex Task Template
 
-Use this template for every Codex implementation task in Trapstar the Demo.
+Use this template for every Codex implementation task in *Trapstar the Demo*.
 
-Codex should treat each task file as a bounded work order. Do not expand scope beyond the task. Do not implement directly from `PROJECT_STATE.md` alone.
+Codex should treat each task file as a bounded work order. Do not expand scope beyond the task, and do not implement directly from `PROJECT_STATE.md` alone.
 
 ---
 
@@ -24,13 +24,11 @@ Status: Draft / Ready for Codex / In Progress / Complete / Blocked
 
 ## Goal
 
-Describe the single concrete outcome of this task.
-
-The goal should be specific enough that Codex can complete it without guessing the larger game design.
+Describe one concrete, testable outcome.
 
 Example:
 
-Create a simple Unity runtime blackboard that displays current Structured state, Emergent pressure, and Negotiated DPA + BASED choice results.
+> Create a minimal Phaser/browser runtime blackboard that displays portable Structured state, Emergent pressure, and the result of one DPA + BASED test action.
 
 ---
 
@@ -39,45 +37,36 @@ Create a simple Unity runtime blackboard that displays current Structured state,
 Before starting, read:
 
 - `PROJECT_STATE.md`
-- `docs/Trapstar_Master_System_Architecture.md` when the task touches core systems, DPA, BASED, SEN, assets, info, time, or runtime AI.
+- `docs/Trapstar_Master_System_Architecture.md` when the task touches core systems, SEN, DPA, BASED, assets, information, time, simulation, presentation, or portability
 
-Relevant design principle:
+Current technical direction:
 
-Trapstar the Demo uses the Structured / Emergent / Negotiated loop.
+- Phaser 3.90
+- TypeScript
+- browser build
+- portable simulation separated from Phaser presentation
 
-- **Structured** = hard-tracked state such as time, money, items, BASED stats, player energy/health, clues, and concrete game values.
-- **Emergent** = pressure such as rumors, reputation, faction goals, personal NPC goals, police heat, scarcity, and social consequences.
-- **Negotiated** = player choice through the Deal / Pressure / Ask frame, colored by BASED traits and Vibes.
-
-DPA is not an ordered loop. The player does not cycle through Deal, then Pressure, then Ask. DPA is the recurring strategic choice frame at meaningful decision points.
-
-DPA maps symbolically to SEN:
+DPA is not an ordered loop.
 
 ```text
 Deal     = Logos / Structured / hard reality
 Pressure = Pathos / Emergent / dynamic force
-Ask      = Ethos / Negotiated / social choice
+Ask      = Ethos / Negotiated / social opening
 ```
 
-Every implementation should support this loop:
-
-1. Structured state defines the situation.
-2. Emergent pressure makes the situation unstable.
-3. The player chooses a DPA frame, colored by a BASED approach.
-4. The result changes Structured state.
-5. New Emergent pressure appears.
+BASED colors the approach; it does not replace the DPA frame.
 
 ---
 
 ## Files to Read First
 
-List only the files Codex should read before working.
+List only the files Codex must read.
 
 Required:
 
 - `PROJECT_STATE.md`
 
-Optional task-specific files:
+Optional task-specific context:
 
 - `docs/Trapstar_Master_System_Architecture.md`
 - `docs/...`
@@ -89,113 +78,161 @@ Optional task-specific files:
 
 ## Files to Create or Modify
 
-List the expected files or folders.
-
-Use exact paths when possible.
+Use exact paths where possible.
 
 Example:
 
 ```text
-UnityProject/Assets/Scripts/Core/GameStateManager.cs
-UnityProject/Assets/Scripts/Debug/RuntimeBlackboard.cs
-UnityProject/Assets/Scripts/Data/NPCState.cs
+PhaserProject/src/simulation/state/GameState.ts
+PhaserProject/src/simulation/actions/resolveAction.ts
+PhaserProject/src/presentation/scenes/DebugScene.ts
+PhaserProject/src/presentation/ui/RuntimeBlackboard.ts
+PhaserProject/tests/resolveAction.test.ts
 ```
 
-Do not modify unrelated files unless absolutely necessary.
+Do not modify unrelated files.
+
+---
+
+## Simulation / Presentation Ownership
+
+State which side owns each change.
+
+### Portable simulation
+
+Use for:
+
+- game state and rules
+- action validation and resolution
+- deterministic randomness
+- world consequences
+- save-ready plain data
+- tests that should run without a Phaser scene
+
+Portable simulation files must not import Phaser.
+
+### Phaser presentation
+
+Use for:
+
+- scenes, sprites, input, collision, cameras, animation playback, UI, audio, and browser delivery
+- converting player input into simulation requests
+- displaying simulation results
+
+Do not store direct Phaser objects as game-state truth.
 
 ---
 
 ## Non-Goals
 
-List what Codex must not do in this task.
+List what Codex must not do.
 
-Example:
+Common examples:
 
 - Do not build the full dialogue system.
 - Do not add live LLM/API calls.
 - Do not implement final art.
-- Do not create procedural mystery generation.
-- Do not redesign the project architecture.
-- Do not change unrelated documentation.
-- Do not add third-party packages unless explicitly requested.
+- Do not create unbounded procedural generation.
+- Do not redesign unrelated architecture.
+- Do not add packages unless explicitly required.
+- Do not create a multi-engine abstraction framework.
+- Do not move portable game rules into Phaser scenes.
 
 ---
 
 ## Required Behavior
 
-Describe what the task must actually do.
-
-Use concrete, testable behavior.
+Describe concrete, testable behavior.
 
 Example:
 
-- Display current day and time.
-- Display police heat.
-- Display faction pressure values.
-- Display last DPA frame.
-- Display last BASED trait or Vibe.
-- Display last negotiation target.
-- Display last negotiation result.
-- Log state changes to the Unity console.
-- Allow simple manual test buttons in the scene.
+- Display current day and minute.
+- Display police HEAT and faction pressure.
+- Display the last DPA frame and BASED Vibe.
+- Trigger one deterministic test action.
+- Show the action outcome and reason.
+- Update portable state without mutating Phaser objects.
+- Log the same state change in the browser console.
+- Allow simple development-only test controls.
 
 ---
 
 ## Structured / Emergent / Negotiated Check
 
-Explain how this task supports the core design loop.
-
 ### Structured
 
-What hard-tracked state does this task create, expose, or modify?
+What hard state does the task create, expose, or modify?
 
 ### Emergent
 
-What pressure, reaction, or changing situation does this task create, expose, or modify?
+What pressure, reaction, or changed situation does the task create, expose, or modify?
 
 ### Negotiated
 
-What player choice, DPA frame, BASED interaction, or consequence does this task create, expose, or modify?
+What Deal / Pressure / Ask choice and BASED approach does the task expose or resolve?
+
+### Consequence
+
+What state changes after resolution?
+
+---
+
+## Portability Check
+
+Answer explicitly:
+
+- Which files contain portable game truth?
+- Which files are Phaser-specific?
+- Are stable string IDs used instead of sprite or scene references?
+- Is gameplay randomness controlled and reproducible where required?
+- Can core resolution be tested without loading Phaser?
+- Does saved or persistent state remain plain, versionable data?
 
 ---
 
 ## Debug / Logging Requirements
 
-Every runtime system should expose its behavior clearly.
+Every runtime system should make its behavior legible.
 
-Include relevant requirements such as:
+Possible requirements:
 
-- Console logs for state changes.
-- On-screen debug values.
-- Reason strings explaining why a value changed.
-- Test buttons or inspector-accessible test values.
-- Debug-only hidden information when useful.
-- Last DPA frame when a player-facing choice is involved.
-- Last BASED trait or Vibe when a player-facing choice is involved.
+- browser-console logs
+- on-screen debug values
+- reason strings explaining state changes
+- deterministic seed display
+- development-only hidden state
+- test buttons or keyboard controls
+- last DPA frame and BASED approach
+- before/after values
 
 Example:
 
 ```text
-Police Heat changed from 20 to 35. Reason: Pressure frame + Menacing BASED Vibe used in public location.
+HEAT changed 2 -> 3.
+Reason: Pressure + Menacing used in a monitored public location.
+Seed: demo-0007.
 ```
 
 ---
 
-## Unity Test Steps
+## Browser Test Steps
 
-Describe exactly how Teddy should test the result in Unity.
+Describe exactly how Teddy should test the result.
 
 Example:
 
-1. Open Unity.
-2. Open the test scene.
-3. Press Play.
-4. Confirm the debug panel appears.
-5. Click the “Apply Pressure” test button.
-6. Confirm the Last DPA frame updates to `Pressure`.
-7. Confirm the Last BASED Vibe updates to the selected test Vibe.
-8. Confirm the relevant state value updates on screen.
-9. Confirm a console log explains the change.
+1. Open a terminal in `PhaserProject/`.
+2. Install dependencies only when the task introduces or requires them.
+3. Run the task-defined development or test command.
+4. Open the local browser build.
+5. Confirm the debug view appears.
+6. Trigger the test action.
+7. Confirm the DPA frame and BASED approach update.
+8. Confirm the portable state changes.
+9. Confirm the browser console and on-screen reason agree.
+10. Run the task-defined build, type-check, and test commands.
+
+Do not invent commands that the repository does not yet define.
 
 ---
 
@@ -203,14 +240,15 @@ Example:
 
 This task is complete only when:
 
-- The requested files exist.
-- The project opens without compile errors.
-- The required behavior works in Unity.
-- Debug/logging requirements are visible.
-- The feature can be tested using the Unity Test Steps.
-- No unrelated systems were expanded.
-- The Structured / Emergent / Negotiated purpose is clear.
-- Any player-facing choice work clearly separates DPA frame from BASED approach.
+- requested files exist
+- task-defined build/type-check/tests pass
+- required browser behavior works
+- debug output is visible and understandable
+- portable simulation is separated from Phaser presentation
+- no Phaser objects are stored as game-state truth
+- DPA and BASED remain distinct
+- no unrelated systems are expanded
+- testing steps are reproducible
 
 ---
 
@@ -218,41 +256,41 @@ This task is complete only when:
 
 Before making changes, Codex must report:
 
-1. What it understands the task to be.
-2. Which files it plans to read.
-3. Which files it plans to create or modify.
-4. Any risks, ambiguities, or missing information.
-5. The smallest safe implementation plan.
+1. Its understanding of the task.
+2. Files it plans to read.
+3. Files it plans to create or modify.
+4. Simulation-owned versus presentation-owned changes.
+5. Risks, ambiguities, or missing contracts.
+6. The smallest safe implementation plan.
 
-Codex should not begin implementation until this plan is reviewed and approved.
+Codex should not begin implementation until the plan is approved.
 
 ---
 
 ## Implementation Notes
 
-After approval, Codex should:
+After approval:
 
 - Make the smallest useful change.
-- Prefer simple, readable code over clever architecture.
-- Keep prototype systems modular.
-- Avoid premature optimization.
-- Avoid adding external dependencies.
-- Include comments where they help future iteration.
-- Preserve the project’s current direction from `PROJECT_STATE.md`.
-- Preserve the distinction between SEN, DPA, and BASED when touching gameplay choice logic.
+- Prefer simple TypeScript over clever architecture.
+- Keep simulation functions deterministic and testable where practical.
+- Keep Phaser-specific work close to presentation.
+- Avoid premature optimization and dependencies.
+- Use comments where they clarify boundaries.
+- Preserve the current direction in `PROJECT_STATE.md`.
 
 ---
 
 ## Completion Report
 
-After implementation, Codex should report:
+After implementation, report:
 
 1. Files created or modified.
-2. What behavior was implemented.
-3. How to test it in Unity.
-4. Any known limitations.
-5. Any recommended next task.
-6. Whether the task changed Structured, Emergent, or Negotiated systems.
-7. Whether the task introduced or changed any DPA frame or BASED approach behavior.
-
----
+2. Behavior implemented.
+3. Portable simulation changes.
+4. Phaser presentation changes.
+5. Build/type-check/test results.
+6. Browser test steps.
+7. Known limitations.
+8. Recommended next bounded task.
+9. Any SEN, DPA, or BASED behavior introduced or changed.
