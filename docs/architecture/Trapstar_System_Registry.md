@@ -172,7 +172,7 @@ ActionRequest
 | `data.information` | Soft / Hard Information State | Data Model | Core | Design Draft | Required | Focused information-state model planned |
 | `data.info_cards` | Info Cards | Data Model | Core | Design Draft | Required | Focused Info Card reference planned |
 | `information.rules` | Information Disclosure and Hardening | Rule Module | Core | Design Draft | Required | Focused information-rules reference planned |
-| `social.heat` | HEAT | Rule Module | Supporting | Design Draft | Optional Integration | Focused HEAT reference planned |
+| `social.heat` | HEAT | Rule Module | Supporting | Design Draft | Required | Focused HEAT reference planned |
 | `social.rep` | REP / Relationship | Rule Module | Supporting | Design Draft | Optional Integration | Focused REP reference planned |
 | `social.fac` | FAC | Rule Module | Supporting | Design Draft | Deferred Integration | Focused FAC reference planned |
 | `social.favor` | FAVOR | Rule Module | Supporting | Design Draft | Deferred Integration | Focused FAVOR reference planned |
@@ -196,6 +196,22 @@ information.rules
 
 `data.information` does not calculate disclosure or hardening. `information.rules` does not redefine the information-state schema.
 
+HEAT ownership:
+
+```text
+social.heat
+-> police-pressure and HEAT calculations, thresholds,
+   and proposed HEAT-state changes
+
+scenario and world modules
+-> circumstances and context that may make HEAT relevant
+
+specialized resolvers
+-> action-specific participation and coordination of HEAT results
+```
+
+`social.heat` is Required for the intended full demo because police-monitored pressure is part of the locked premise. A narrower task or action may still explicitly exclude or not consult it.
+
 ### 5.3 Resources and survival
 
 | Module ID | Name | Primary Kind | Role | Maturity | Demo Default | Detailed Authority |
@@ -211,10 +227,10 @@ information.rules
 
 | Module ID | Name | Primary Kind | Role | Maturity | Demo Default | Detailed Authority |
 |---|---|---|---|---|---|---|
-| `world.map` | Map and Traversal | Rule Module | Supporting | Design Draft | Deferred Integration | Map reference planned |
+| `world.map` | Map and Traversal | Rule Module | Supporting | Design Draft | Required | Map reference planned |
 | `world.schedule` | NPC Schedules | Rule Module | Supporting | Design Draft | Deferred Integration | Schedule reference planned |
 | `scenario.stolen_package` | Stolen Package Mission | Scenario Module | Core | Design Draft | Required | Demo-scope reference planned |
-| `scenario.run_card` | Run-Card Generator | Scenario Module | Supporting | Design Draft | Deferred Integration | Run-card reference planned |
+| `scenario.run_card` | Run-Card Generator | Scenario Module | Supporting | Design Draft | Required | Run-card reference planned |
 | `conflict.combat` | Combat Alert State | Rule Module | Supporting | Design Draft | Deferred Integration | Combat reference planned |
 
 ### 5.5 Resolvers
@@ -226,9 +242,30 @@ information.rules
 | `resolver.travel` | TravelResolver | Resolver | Supporting | Design Draft | Deferred Integration | Future reference |
 | `resolver.combat` | CombatResolver | Resolver | Supporting | Design Draft | Deferred Integration | Future reference |
 | `resolver.end_of_day` | EndOfDayResolver | Resolver | Supporting | Design Draft | Deferred Integration | Future reference |
-| `resolver.run_setup` | RunSetupResolver | Resolver | Supporting | Design Draft | Deferred Integration | Run-card reference planned |
+| `resolver.run_setup` | RunSetupResolver | Resolver | Supporting | Design Draft | Required | Run-card reference planned |
 
 `resolver.interaction` accepts supported interaction requests and owns interaction-specific validation and coordination. It does not own the generic request envelope.
+
+Run setup ownership:
+
+```text
+scenario.run_card
+-> run-card structure and generated scenario truth,
+   including approved randomized roles, placements,
+   and starting conditions
+
+infra.random
+-> reproducible random source and seed behavior
+
+resolver.run_setup
+-> coordinates content definitions, the approved seed/random source,
+   and scenario modules to establish the starting run
+
+runtime.state and runtime.state_transition
+-> authoritative runtime truth and application of accepted starting changes
+```
+
+`resolver.run_setup` coordinates these owners without absorbing their internal generation, randomness, or state-transition rules.
 
 ### 5.6 Runtime and infrastructure
 
@@ -240,7 +277,7 @@ information.rules
 | `runtime.outcome` | ResolvedOutcome | Data Model | Core | Design Draft | Required | Action-resolution reference planned |
 | `runtime.state_transition` | Ordered State Transition | Infrastructure Module | Core | Design Draft | Required | Consequence-order reference planned |
 | `infra.ids` | Stable IDs | Infrastructure Module | Core | Design Accepted | Required | Master portability rules; focused reference planned |
-| `infra.random` | Seeded Randomness | Infrastructure Module | Core | Design Accepted | Optional Integration | Master portability rules; focused reference planned |
+| `infra.random` | Seeded Randomness | Infrastructure Module | Core | Design Accepted | Required | Master portability rules; focused reference planned |
 | `infra.save` | Save-State Schema | Infrastructure Module | Supporting | Design Draft | Deferred Integration | Save reference planned |
 | `infra.tests` | Engine-Light Simulation Tests | Infrastructure Module | Core | Design Draft | Required | Technical standards planned |
 | `infra.asset_standards` | Asset and Animation Standards | Infrastructure Module | Supporting | Design Accepted | Deferred Integration | Master asset rules; focused reference planned |
