@@ -5,7 +5,7 @@
 **Project:** *Trapstar the Demo*  
 **Document role:** Standard structure and behavioral contract for modular design and implementation references  
 **Architecture role:** Core architecture document  
-**Design maturity:** Design Draft  
+**Design maturity:** Design Accepted  
 **Last updated:** 2026-07-13
 
 ---
@@ -16,28 +16,22 @@ This standard defines how modular parts of *Trapstar the Demo* should be documen
 
 Its purpose is to let modules be added, refined, enabled, disabled, deferred, replaced, or removed without turning the project into one tightly coupled block.
 
-A useful contract makes these things obvious:
+A useful contract makes clear:
 
 1. what the module owns;
 2. what it does not own;
-3. what kind of module it is;
-4. how important it is to the architecture;
-5. how mature its design is;
-6. whether it is required, optional, or deferred for the current scope;
+3. its one Primary Kind;
+4. its Architecture Role;
+5. its Design Maturity;
+6. its Activation Role for the named contract or slice;
 7. what it receives and returns;
-8. what happens when it is unavailable.
+8. what happens when it or an integration is unavailable.
 
-Not every module requires the same amount of documentation. This standard therefore defines three contract profiles:
-
-- Lightweight Contract;
-- Standard Module Contract;
-- Resolver Contract.
+Not every module needs the same amount of documentation. This standard therefore defines Lightweight, Standard, and Resolver contract profiles.
 
 ---
 
-## 2. Governing Architecture Rules
-
-Every contract must preserve these project rules:
+## 2. Governing Rules
 
 ```text
 Commands change the world.
@@ -55,42 +49,139 @@ Action Request
 
 Required principles:
 
-- Each module has one primary kind.
-- Each module owns one bounded category of responsibility.
-- Architecture role, design maturity, and activation role are independent fields.
-- A module may calculate or propose changes within its responsibility.
-- A module does not directly mutate unrelated state.
-- A resolver coordinates cross-module actions.
-- A resolver does not absorb every module's internal rules.
-- One authoritative transition applies accepted state changes.
-- Presentation does not create gameplay truth.
-- Phaser objects never become portable state or stable identity.
-- Gameplay randomness is controlled and reproducible.
-- Optional integrations have explicit absence behavior.
-- Missing required modules fail visibly and safely.
+- each module has one Primary Kind;
+- each module owns one bounded responsibility;
+- Architecture Role, Design Maturity, and Activation Role are separate;
+- modules propose changes only within their authority;
+- modules do not directly mutate unrelated state;
+- resolvers coordinate cross-module actions without absorbing every internal rule;
+- one authoritative transition applies accepted state changes;
+- presentation does not create gameplay truth;
+- Phaser objects never become portable state or stable identity;
+- gameplay randomness is controlled and reproducible;
+- optional integrations have explicit absence behavior;
+- missing required modules fail visibly and safely.
 
 ---
 
-## 3. Domain-Based Authority
+## 3. Governance-Document Exemption
 
-A module contract must respect the authority domain of each repository document.
+The System Registry, this Contract Standard, and other architecture-governance documents are not gameplay modules.
+
+They are exempt from gameplay-module requirements such as:
+
+- Module ID;
+- Current-Phase Default Activation;
+- action-specific Activation Role;
+- runtime inputs and outputs;
+- resolver participation;
+- semantic outcome signals.
+
+They should still record their document role, Architecture Role, Design Maturity, and authority relationship.
+
+---
+
+## 4. Domain-Based Authority
 
 | Document or artifact | Authority domain |
 |---|---|
 | `README.md` | Introduction and navigation. |
-| `PROJECT_STATE.md` | Current phase, blockers, active priorities, and approved next work. |
+| `PROJECT_STATE.md` | Current phase, blockers, priorities, and approved next work. |
 | Master System Architecture | Universal cross-project design and technical boundaries. |
-| System Registry | Module identity, primary kind, architecture role, design maturity, activation role, and detailed-authority location. |
+| System Registry | Module identity, Primary Kind, Architecture Role, Design Maturity, Current-Phase Default Activation, and authority location. |
 | Focused module reference | Detailed authority for the named module. |
 | Design packet | Implementation-ready feature or content specification. |
+| Resolver Contract | Action-specific module participation and consequence order. |
 | Codex task | One bounded implementation order. |
 | Implementation and tests | Evidence that approved behavior works. |
 
-A focused contract may refine its module's details, but it must not silently override universal architecture boundaries or redefine unrelated modules.
+A focused contract may refine its own module, but it must not silently override universal architecture or redefine unrelated modules.
 
 ---
 
-## 4. Required Contract Header
+## 5. Classification Fields
+
+### 5.1 Primary Kind
+
+Every module has exactly one:
+
+```text
+Design Philosophy
+Choice Frame
+Action Language
+Data Model
+Rule Module
+Resolver
+Scenario Module
+Presentation Module
+Infrastructure Module
+```
+
+A module may own data, use infrastructure, or sit on a boundary without receiving a second Primary Kind.
+
+### 5.2 Architecture Role
+
+```text
+Core
+Supporting
+```
+
+- **Core** — foundational to project identity or minimum architecture.
+- **Supporting** — additive, specialized, or phase-dependent.
+
+### 5.3 Design Maturity
+
+```text
+Design Draft
+Design Accepted
+Implementation Ready
+Prototype Active
+Experimental
+Superseded
+Removed
+```
+
+- **Design Draft** — important details remain unresolved.
+- **Design Accepted** — concept and architectural relationship are approved, but the implementation-facing contract is incomplete.
+- **Implementation Ready** — the selected slice has complete ownership, interfaces, dependencies, failure behavior, determinism, order, and tests.
+- **Prototype Active** — implemented, tested, verified, and accurately documented.
+- **Experimental** — isolated trial, not canonical.
+- **Superseded** — replaced but retained for history.
+- **Removed** — no longer accepted.
+
+`Design Accepted` is safe for naming, planning, compatibility, and high-level design. It is not sufficient by itself for implementation.
+
+### 5.4 Activation Scope
+
+The System Registry records **Current-Phase Default Activation**.
+
+Focused contracts record:
+
+```text
+Activation role for this contract or slice:
+Required
+Optional Integration
+Deferred Integration
+```
+
+Resolver Contracts are the final authority for action-specific participation.
+
+Example:
+
+```text
+social.heat
+Registry default: Optional Integration
+
+Public Pressure: Required
+Private Ask: Optional Integration
+Inventory-only action: Not consulted
+```
+
+A resolver may differ from the registry default only within its approved scope and must state the difference explicitly.
+
+---
+
+## 6. Required Contract Header
 
 Every focused module reference should begin with:
 
@@ -100,90 +191,22 @@ Every focused module reference should begin with:
 **Parent architecture:** `docs/Trapstar_Master_System_Architecture.md`  
 **Registry:** `docs/architecture/Trapstar_System_Registry.md`  
 **Module ID:** `category.module_name`  
-**Primary kind:** Design Philosophy / Choice Frame / Action Language / Data Model / Rule Module / Resolver / Scenario Module / Presentation Module / Infrastructure Module  
-**Architecture role:** Core / Supporting  
-**Design maturity:** Design Draft / Implementation Ready / Prototype Active / Experimental / Superseded / Removed  
-**Activation role:** Required / Optional Integration / Deferred Integration  
-**Contract profile:** Lightweight / Standard / Resolver  
-**Detailed authority:** This file controls the module-specific rules described below.  
-**Last updated:** YYYY-MM-DD
+**Primary Kind:** `[one kind]`  
+**Architecture Role:** `Core / Supporting`  
+**Design Maturity:** `Design Draft / Design Accepted / Implementation Ready / Prototype Active / Experimental / Superseded / Removed`  
+**Activation Role for this contract or slice:** `Required / Optional Integration / Deferred Integration`  
+**Contract Profile:** `Lightweight / Standard / Resolver`  
+**Detailed Authority:** `This file controls ...`  
+**Last updated:** `YYYY-MM-DD`
 ```
 
-A module ID should be stable, lowercase, and namespaced.
-
-Examples:
-
-```text
-interaction.based
-social.heat
-resource.time
-resolver.interaction
-runtime.outcome
-presentation.blackboard
-```
-
-File names may change later. Module IDs should change only when the conceptual identity changes.
+Module IDs should be stable, lowercase, and namespaced. File names may change; Module IDs should change only when conceptual identity changes.
 
 ---
 
-## 5. Independent Classification Fields
+## 7. Contract Profiles
 
-### 5.1 Primary kind
-
-Every module has exactly one primary kind.
-
-| Primary kind | Use |
-|---|---|
-| **Design Philosophy** | Project-wide design lens without runtime rule ownership. |
-| **Choice Frame** | Broad player intent or strategic framing. |
-| **Action Language** | Manner, tone, modifiers, permissions, or ability expression. |
-| **Data Model** | Portable structure or authoritative data shape. |
-| **Rule Module** | Bounded gameplay calculation. |
-| **Resolver** | Explicit coordinator for a class of action. |
-| **Scenario Module** | Mission-specific or run-specific truth. |
-| **Presentation Module** | Input and display behavior without simulation authority. |
-| **Infrastructure Module** | Identity, transition, save, test, portability, or reproducibility support. |
-
-A module may own data or use infrastructure without receiving a second primary kind.
-
-### 5.2 Architecture role
-
-```text
-Core
-Supporting
-```
-
-- **Core** means foundational to the project's identity or minimum architecture.
-- **Supporting** means additive, specialized, or phase-dependent.
-
-### 5.3 Design maturity
-
-```text
-Design Draft
-Implementation Ready
-Prototype Active
-Experimental
-Superseded
-Removed
-```
-
-Design maturity answers whether the contract is ready to be implemented, not whether the module is important or currently enabled.
-
-### 5.4 Activation role
-
-```text
-Required
-Optional Integration
-Deferred Integration
-```
-
-Activation role may vary by feature or phase. A module that is optional in one resolver may be required in another; resolver contracts must state the action-specific truth.
-
----
-
-## 6. Contract Profiles
-
-### 6.1 Lightweight Contract
+### 7.1 Lightweight Contract
 
 Use for:
 
@@ -201,13 +224,11 @@ Required sections:
 4. Does Not Own
 5. Key Concepts or Data
 6. Relationships
-7. Design Maturity and Activation
+7. Design Maturity and Activation Scope
 8. Open Questions
 9. Change Impact
 
-A lightweight contract must still define clear boundaries. It is shorter because it does not pretend that every conceptual document is an implementation-ready rule engine.
-
-### 6.2 Standard Module Contract
+### 7.2 Standard Module Contract
 
 Use for:
 
@@ -241,32 +262,33 @@ Required sections:
 20. Definition of Ready
 21. Definition of Done
 
-### 6.3 Resolver Contract
+### 7.3 Resolver Contract
 
 Use only for Resolver modules.
 
-A Resolver Contract includes the relevant Standard sections plus:
+It includes the relevant Standard sections plus:
 
 1. Accepted Action Types
 2. Required Modules by Action Type
 3. Optional Modules by Action Type
-4. Validation Stages
-5. Exact Consequence Phases
-6. Conflict-Resolution Policy
-7. State-Transition Policy
-8. Secondary-Check Order
-9. ResolvedOutcome Responsibility
-10. Presentation Handoff
-11. Input Locking and Restoration Boundary
-12. Resolver-Specific Tests
+4. Modules Not Consulted by Action Type
+5. Validation Stages
+6. Exact Consequence Phases
+7. Conflict-Resolution Policy
+8. State-Transition Policy
+9. Secondary-Check Order
+10. ResolvedOutcome Responsibility
+11. Presentation Handoff
+12. Input Locking and Restoration Boundary
+13. Resolver-Specific Tests
 
-### 6.4 Default profile by primary kind
+### 7.4 Default Profile by Primary Kind
 
-| Primary kind | Default contract profile |
+| Primary Kind | Default Profile |
 |---|---|
 | Design Philosophy | Lightweight |
 | Choice Frame | Lightweight |
-| Action Language | Lightweight until implementation-facing; Standard when it calculates or proposes gameplay effects |
+| Action Language | Lightweight until implementation-facing; Standard when calculating or proposing effects |
 | Data Model | Lightweight for simple schemas; Standard for substantial authoritative models |
 | Rule Module | Standard |
 | Resolver | Resolver |
@@ -274,11 +296,11 @@ A Resolver Contract includes the relevant Standard sections plus:
 | Presentation Module | Lightweight or Standard according to responsibility |
 | Infrastructure Module | Lightweight or Standard according to responsibility |
 
-A module may use a stricter profile than its default. It may not omit sections required by its actual responsibility.
+A module may use a stricter profile than its default. It may not omit sections required by its real responsibility.
 
 ---
 
-## 7. Lightweight Contract Template
+## 8. Lightweight Template
 
 ```markdown
 # [Module Name]
@@ -286,38 +308,28 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Parent architecture:** `docs/Trapstar_Master_System_Architecture.md`  
 **Registry:** `docs/architecture/Trapstar_System_Registry.md`  
 **Module ID:** `[category.module]`  
-**Primary kind:** `[kind]`  
-**Architecture role:** `[Core / Supporting]`  
-**Design maturity:** `[maturity]`  
-**Activation role:** `[role]`  
-**Contract profile:** Lightweight  
-**Detailed authority:** This file controls [specific authority].  
+**Primary Kind:** `[kind]`  
+**Architecture Role:** `[Core / Supporting]`  
+**Design Maturity:** `[maturity]`  
+**Activation Role for this contract or slice:** `[role]`  
+**Contract Profile:** `Lightweight`  
+**Detailed Authority:** `This file controls ...`  
 **Last updated:** `[date]`
 
----
-
 ## 1. Purpose
-
 ## 2. Architecture Relationship
-
 ## 3. Owns
-
 ## 4. Does Not Own
-
 ## 5. Key Concepts or Data
-
 ## 6. Relationships
-
-## 7. Design Maturity and Activation
-
+## 7. Design Maturity and Activation Scope
 ## 8. Open Questions
-
 ## 9. Change Impact
 ```
 
 ---
 
-## 8. Standard Module Contract Template
+## 9. Standard Template
 
 ```markdown
 # [Module Name]
@@ -325,66 +337,42 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Parent architecture:** `docs/Trapstar_Master_System_Architecture.md`  
 **Registry:** `docs/architecture/Trapstar_System_Registry.md`  
 **Module ID:** `[category.module]`  
-**Primary kind:** `[kind]`  
-**Architecture role:** `[Core / Supporting]`  
-**Design maturity:** `[maturity]`  
-**Activation role:** `[role]`  
-**Contract profile:** Standard  
-**Detailed authority:** This file controls [specific authority].  
+**Primary Kind:** `[kind]`  
+**Architecture Role:** `[Core / Supporting]`  
+**Design Maturity:** `[maturity]`  
+**Activation Role for this contract or slice:** `[role]`  
+**Contract Profile:** `Standard`  
+**Detailed Authority:** `This file controls ...`  
 **Last updated:** `[date]`
 
----
-
 ## 1. Purpose
-
 ## 2. Owns
-
 ## 3. Does Not Own
-
 ## 4. Inputs
-
 ### Required
-
 ### Optional
-
 ## 5. Outputs
-
 ## 6. State Read
-
 ## 7. State Changes Proposed
-
 ## 8. Required Dependencies
-
 ## 9. Optional Integrations
-
 ## 10. Called By
-
 ## 11. May Call
-
 ## 12. Validation and Failure Behavior
-
 ## 13. Determinism
-
 ## 14. Consequence Participation
-
 ## 15. Semantic Outcome Signals
-
 ## 16. Events
-
 ## 17. Tests
-
 ## 18. Open Questions
-
 ## 19. Change Impact
-
 ## 20. Definition of Ready
-
 ## 21. Definition of Done
 ```
 
 ---
 
-## 9. Resolver Contract Template
+## 10. Resolver Template
 
 ```markdown
 # [Resolver Name]
@@ -392,104 +380,53 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Parent architecture:** `docs/Trapstar_Master_System_Architecture.md`  
 **Registry:** `docs/architecture/Trapstar_System_Registry.md`  
 **Module ID:** `resolver.[name]`  
-**Primary kind:** Resolver  
-**Architecture role:** `[Core / Supporting]`  
-**Design maturity:** `[maturity]`  
-**Activation role:** `[role]`  
-**Contract profile:** Resolver  
-**Detailed authority:** This file controls [resolver class] coordination.  
+**Primary Kind:** `Resolver`  
+**Architecture Role:** `[Core / Supporting]`  
+**Design Maturity:** `[maturity]`  
+**Activation Role for this contract or slice:** `[role]`  
+**Contract Profile:** `Resolver`  
+**Detailed Authority:** `This file controls ...`  
 **Last updated:** `[date]`
 
----
-
 ## 1. Purpose
-
 ## 2. Owns
-
 ## 3. Does Not Own
-
 ## 4. Accepted Action Types
-
 ## 5. Action Request Inputs
-
 ## 6. Required Modules by Action Type
-
 ## 7. Optional Modules by Action Type
-
-## 8. State and Content Read
-
-## 9. Validation Stages
-
-## 10. Exact Consequence Phases
-
-## 11. Conflict-Resolution Policy
-
-## 12. State-Transition Policy
-
-## 13. Secondary-Check Order
-
-## 14. ResolvedOutcome Responsibility
-
-## 15. Semantic Outcome Signals
-
-## 16. Presentation Handoff
-
-## 17. Input Locking and Restoration Boundary
-
-## 18. Failure Behavior
-
-## 19. Determinism
-
-## 20. Events
-
-## 21. Tests
-
-## 22. Open Questions
-
-## 23. Change Impact
-
-## 24. Definition of Ready
-
-## 25. Definition of Done
+## 8. Modules Not Consulted by Action Type
+## 9. State and Content Read
+## 10. Validation Stages
+## 11. Exact Consequence Phases
+## 12. Conflict-Resolution Policy
+## 13. State-Transition Policy
+## 14. Secondary-Check Order
+## 15. ResolvedOutcome Responsibility
+## 16. Semantic Outcome Signals
+## 17. Presentation Handoff
+## 18. Input Locking and Restoration Boundary
+## 19. Failure Behavior
+## 20. Determinism
+## 21. Events
+## 22. Tests
+## 23. Open Questions
+## 24. Change Impact
+## 25. Definition of Ready
+## 26. Definition of Done
 ```
 
 ---
 
-## 10. Shared Standard Section Guidance
+## 11. Standard Section Guidance
 
-### 10.1 Purpose
+### Owns and Does Not Own
 
-Explain the one problem the module exists to solve.
+State the exact category of rules or data the module controls and explicitly name nearby responsibilities it does not control.
 
-Good:
+### Inputs and Outputs
 
-> The HEAT module calculates police-attention changes and threshold consequences.
-
-Too broad:
-
-> The HEAT module manages police, crime, factions, NPC fear, missions, movement, and combat.
-
-### 10.2 Owns
-
-List the rules or data for which the module is the authority.
-
-### 10.3 Does Not Own
-
-State boundaries explicitly. Another module or resolver may use this module's output, but the module should not perform unrelated effects secretly.
-
-### 10.4 Inputs
-
-List the smallest useful plain-data context the module may read:
-
-- required and optional fields;
-- stable IDs;
-- relevant current-state slices;
-- relevant content definitions;
-- controlled random input when permitted.
-
-### 10.5 Outputs
-
-A Rule Module should generally return a calculation or proposal, not directly mutate global state.
+Use the smallest useful plain-data context. Rule Modules should return calculations or proposals rather than directly mutate global state.
 
 Example:
 
@@ -505,62 +442,29 @@ Example:
 }
 ```
 
-### 10.6 State Read
+### State Boundaries
 
-List the authoritative state fields the module may inspect.
+List state fields the module may read and state paths it may propose changing. A proposal is not permission to mutate immediately.
 
-### 10.7 State Changes Proposed
+### Dependencies and Integrations
 
-List the state paths the module may propose changing. This is an ownership boundary, not permission to mutate immediately.
+Required dependencies must be few and explicit. Optional integrations must define absence behavior. Rule Modules should normally call no unrelated Rule Modules; cross-module coordination belongs in a Resolver.
 
-### 10.8 Required Dependencies
+### Validation and Failure
 
-List modules without which the contract cannot perform its minimum responsibility.
+Define behavior for missing inputs, invalid IDs, forbidden actions, unavailable required modules, absent optional context, out-of-range values, and content/runtime disagreement.
 
-### 10.9 Optional Integrations
+Failures return explicit data. They do not silently do nothing.
 
-List modules that may add context or consequences but are not required for minimum operation.
+### Determinism
 
-### 10.10 Called By
-
-List resolvers or lifecycle processes allowed to invoke the module.
-
-### 10.11 May Call
-
-Rule Modules should normally call no unrelated Rule Modules. Cross-module coordination should usually remain in a Resolver.
-
-### 10.12 Validation and Failure Behavior
-
-Define behavior for:
-
-- missing required input;
-- invalid IDs;
-- forbidden actions;
-- unavailable required modules;
-- absent optional context;
-- out-of-range data;
-- disagreement between content and runtime state.
-
-Failures should return explicit data rather than silently doing nothing.
-
-### 10.13 Determinism
-
-State whether the module:
-
-- is fully deterministic;
-- may use a controlled random source;
-- records random draws or seed position;
-- returns the same result for identical input and seed.
+State whether the module is fully deterministic, may use controlled randomness, records random draws or seed position, and returns the same result for identical input and seed.
 
 Uncontrolled randomness is prohibited for gameplay truth.
 
-### 10.14 Consequence Participation
+### Semantic Outcome Signals
 
-State where the module participates in a Resolver's documented sequence. A Rule Module should not define the entire global order unless ordering is its specific responsibility.
-
-### 10.15 Semantic Outcome Signals
-
-Simulation modules may report semantic facts such as:
+Simulation modules may report semantic facts:
 
 ```text
 heat_changed
@@ -570,31 +474,15 @@ information_disclosed
 time_advanced
 ```
 
-They should not prescribe UI-specific actions such as camera shake, HUD flashing, animation names, or audio clips.
+They must not prescribe camera shake, HUD flashing, animation names, or audio clips. The Presentation Adapter translates semantic signals into Phaser-facing cues.
 
-The Presentation Adapter translates semantic outcome signals into Phaser-facing cues.
+### Events
 
-### 10.16 Events
-
-Events report completed results. They must not become the hidden owner of critical state changes.
-
-### 10.17 Tests
-
-List minimum contract, deterministic, failure, absence, and integration tests.
-
-### 10.18 Open Questions
-
-Codex must not invent answers to blocking questions unless a task explicitly authorizes a bounded temporary behavior.
-
-### 10.19 Change Impact
-
-Identify affected Resolver contracts, tasks, state fields, save schemas, tests, and semantic signals.
+Events report completed results. They do not become hidden owners of critical state changes.
 
 ---
 
-## 11. Data Ownership Rules
-
-### 11.1 Definitions versus runtime state
+## 12. Data Ownership Rules
 
 ```text
 Content Definitions = what something is
@@ -604,356 +492,121 @@ Resolver = which modules participate and in what order
 Presentation = how the result is shown
 ```
 
-Content definitions should not contain mutable run truth.
-
-Runtime state should not contain Phaser scenes, sprites, cameras, animation objects, containers, physics bodies, DOM nodes, or event emitters.
-
-### 11.2 Values versus modules
-
-A value is not automatically a module.
-
-Examples:
+A value is not automatically a module:
 
 - `heat: 3` is state;
-- HEAT calculation and threshold logic belong to `social.heat`;
+- HEAT calculation belongs to `social.heat`;
 - `currentMinute: 480` is state;
-- minute-cost and time-advancement rules belong to `resource.time`.
+- TIME rules belong to `resource.time`.
 
-### 11.3 Stable identity
-
-Modules exchange stable IDs and plain data.
-
-Good:
-
-```text
-actorId: "npc_marvin"
-locationId: "location_center_store"
-```
-
-Avoid:
-
-```text
-actorSprite: Phaser.GameObjects.Sprite
-locationScene: Phaser.Scene
-```
+Portable state must not contain Phaser scenes, sprites, cameras, containers, animation objects, physics bodies, DOM nodes, or event emitters.
 
 ---
 
-## 12. Required, Optional, and Deferred Behavior
-
-### 12.1 Required dependency unavailable
+## 13. Required, Optional, and Deferred Behavior
 
 ```text
-required module missing
+required module unavailable
 -> validation fails
 -> no authoritative transition
 -> explicit failure outcome
--> debug trace names the missing module
 ```
 
-### 12.2 Optional integration unavailable
-
 ```text
-optional integration missing or disabled
--> skip its calculation
--> do not fabricate a default consequence
+optional integration unavailable
+-> skip its contribution
+-> fabricate no default consequence
 -> record that it was not consulted
 -> continue with required modules
 ```
 
-### 12.3 Deferred integration
-
-A deferred module must not be represented by incomplete hidden behavior.
-
-Either:
-
-- the relevant feature is unavailable;
-- the Resolver follows an explicitly documented reduced path;
-- or the task provides a bounded temporary placeholder.
-
----
-
-## 13. Rule Module Standard
-
-A Rule Module normally behaves like a focused calculation:
-
 ```text
-current state slice
-+ content definitions
-+ action context
-+ controlled random source if allowed
--> validation
--> proposed state changes
--> reasons
--> secondary-check requests
--> semantic outcome signals
+deferred integration
+-> feature unavailable or explicit reduced path
+-> no hidden placeholder behavior
 ```
 
-A Rule Module must not:
-
-- apply changes to unrelated state;
-- emit authoritative cross-system commands;
-- locate dependencies through Phaser scenes or global listeners;
-- mutate state while calculating;
-- hide important consequences in callbacks;
-- decide final presentation timing.
-
 ---
 
-## 14. Resolver Standard
+## 14. Design-Maturity Gates
 
-A Resolver is explicit project-specific glue.
+### Design Draft
 
-It may:
+May contain unresolved mechanics. Do not implement unless an approved task defines a bounded temporary behavior.
 
-1. receive an Action Request;
-2. validate basic structure;
-3. gather relevant content and state;
-4. identify required and optional modules;
-5. call them in a documented order;
-6. combine proposed changes;
-7. resolve conflicts;
-8. apply one authoritative transition;
-9. process ordered secondary checks;
-10. build one ResolvedOutcome;
-11. hand semantic signals to presentation after truth is established.
+### Design Accepted
 
-A Resolver must not:
+The concept and architecture relationship are approved. It may guide naming and planning but is not code-ready by itself.
 
-- become a universal game manager;
-- contain all internal HEAT, REP, TIME, Info, inventory, mission, or combat rules;
-- depend on animation completion to decide truth;
-- use uncontrolled event chains for critical consequences;
-- directly manipulate Phaser sprites as part of simulation resolution.
+### Implementation Ready
 
----
-
-## 15. Presentation Module Standard
-
-Presentation Modules may:
-
-- collect keyboard, pointer, or menu input;
-- display current state;
-- animate resolved outcomes;
-- play audio;
-- update HUD and dialogue;
-- move cameras;
-- render characters and environments;
-- emit non-authoritative notifications after resolution.
-
-Presentation Modules must not:
-
-- directly change HEAT, REP, TIME, Info, inventory, mission truth, or win/loss state;
-- use sprite identity as simulation identity;
-- infer authoritative consequences from animation state;
-- serialize Phaser objects into saves;
-- hide gameplay logic inside scene update loops.
-
-A Presentation Adapter translates player-facing input into plain Action Requests and translates ResolvedOutcome semantic signals into display instructions.
-
----
-
-## 16. Scenario Module Standard
-
-A Scenario Module may own:
-
-- mission-specific roles;
-- objective truth;
-- bounded setup pools;
-- win and failure conditions;
-- scenario-specific validation;
-- scenario-specific content definitions.
-
-It must not silently redefine universal module rules.
-
-The Stolen Package scenario may assign guilt and evidence, but it should use shared Information, TIME, REP, HEAT, and Resolver contracts rather than creating private incompatible versions.
-
----
-
-## 17. Infrastructure Module Standard
-
-Infrastructure Modules include:
-
-- stable IDs;
-- seeded randomness;
-- save schemas;
-- state transitions;
-- test harnesses;
-- content validation.
-
-They support gameplay modules without absorbing gameplay design.
-
-For example:
-
-- seeded randomness supplies reproducible draws; it does not decide whether Pressure succeeds;
-- state transition applies accepted changes; it does not calculate the meaning of REP or HEAT.
-
----
-
-## 18. Design-Maturity Gates
-
-### 18.1 Design Draft
-
-A Design Draft may contain unresolved mechanics. It should not be implemented unless a task explicitly defines a bounded temporary behavior.
-
-### 18.2 Implementation Ready
-
-A module is Implementation Ready only when the selected slice has:
+The selected slice has:
 
 - clear purpose and ownership;
-- one primary kind;
+- one Primary Kind;
 - explicit inputs and outputs;
-- explicit state-read and proposed-change boundaries;
-- identified required and optional dependencies;
-- defined failure behavior;
-- defined determinism requirements;
-- known consequence participation;
-- specified tests;
+- state-read and proposed-change boundaries;
+- required dependencies and optional integrations;
+- failure behavior;
+- determinism requirements;
+- consequence participation;
+- tests;
 - no blocking open questions.
 
-### 18.3 Prototype Active
+### Prototype Active
 
-A module becomes Prototype Active only when:
-
-- implementation exists;
-- tests pass;
-- browser behavior is verified where relevant;
-- documentation matches behavior;
-- known limitations are recorded.
+Implementation exists, tests pass, relevant browser behavior is verified, documentation matches behavior, and limitations are recorded.
 
 ---
 
-## 19. Definition of Ready Checklist
+## 15. Definition of Ready Checklist
 
-Before a module is named in an implementation task, confirm:
+Before a module is named in an implementation task:
 
-- [ ] It has a stable Module ID.
-- [ ] It has one Primary Kind.
-- [ ] Its Architecture Role is recorded.
-- [ ] Its Design Maturity permits implementation.
-- [ ] Its Activation Role is explicit for the intended slice.
-- [ ] It appears in the System Registry.
-- [ ] Its ownership is bounded.
-- [ ] Its contract profile is appropriate.
-- [ ] Inputs and outputs are explicit where relevant.
-- [ ] State-read and proposed-change permissions are explicit where relevant.
-- [ ] Required dependencies are explicit.
-- [ ] Optional integrations are explicit.
-- [ ] Missing-module behavior is explicit.
-- [ ] Determinism requirements are explicit.
-- [ ] Resolver participation is explicit where relevant.
-- [ ] Minimum tests are explicit.
-- [ ] Blocking open questions are resolved.
-
----
-
-## 20. Definition of Done Checklist
-
-An implemented module is complete only when:
-
-- [ ] Code matches the approved contract.
-- [ ] Portable state contains no Phaser objects.
-- [ ] The module does not directly command unrelated modules.
-- [ ] Required failure cases return explicit results.
-- [ ] Optional absence behavior works.
-- [ ] Deterministic tests pass where required.
-- [ ] State changes are traceable.
-- [ ] Events report completed changes rather than causing hidden truth.
-- [ ] Semantic signals are translated by presentation only after authoritative resolution.
-- [ ] Registry maturity and activation are updated.
-- [ ] Known limitations are documented.
+- [ ] stable Module ID;
+- [ ] one Primary Kind;
+- [ ] Architecture Role recorded;
+- [ ] Design Maturity permits implementation;
+- [ ] Activation Role explicit for the intended slice;
+- [ ] registry entry exists;
+- [ ] ownership is bounded;
+- [ ] profile is appropriate;
+- [ ] interfaces are explicit where relevant;
+- [ ] state boundaries are explicit where relevant;
+- [ ] required dependencies and optional integrations are explicit;
+- [ ] missing-module behavior is explicit;
+- [ ] determinism is explicit;
+- [ ] resolver participation is explicit where relevant;
+- [ ] tests are specified;
+- [ ] blocking questions are resolved.
 
 ---
 
-## 21. Change-Control Procedure
+## 16. Definition of Done Checklist
 
-When changing a module contract:
-
-1. Identify the classification or contract field being changed.
-2. Identify affected Resolvers.
-3. Identify affected tasks and tests.
-4. Identify affected runtime-state or save fields.
-5. Identify affected semantic outcome signals and presentation mappings.
-6. Update the focused reference.
-7. Update the System Registry if kind, role, maturity, activation, ownership, or authority changed.
-8. Do not rewrite unrelated references without a real contract impact.
-
-A module may be replaced without rewriting the whole project when the replacement preserves the required interface or dependent Resolvers are deliberately updated.
-
----
-
-## 22. Example Compact Standard Contract — TIME
-
-```text
-Module ID: resource.time
-Primary kind: Rule Module
-Architecture role: Core
-Design maturity: Design Draft
-Activation role: Required
-Contract profile: Standard
-
-Purpose:
-Calculate in-world minute costs and propose time advancement.
-
-Owns:
-- action minute costs
-- time advancement proposal
-- TIME-owned threshold requests
-- TIME reason strings
-
-Does not own:
-- animation duration
-- hunger calculation
-- schedule relocation
-- mission failure
-- HEAT
-
-Inputs:
-- action type
-- action context
-- current day/minute
-- approved cost definitions
-
-Outputs:
-- proposed minute change
-- resulting day/minute preview
-- threshold checks requested
-- reasons
-- semantic signal: time_advanced
-- debug trace
-
-Required dependencies:
-- runtime state
-- content definitions
-
-Optional integrations:
-- survival pressure
-- schedules
-- mission deadlines
-
-Called by:
-- InteractionResolver
-- TravelResolver
-- CombatResolver
-- EndOfDayResolver
-
-Failure behavior:
-Missing cost definition fails validation unless the active task defines a safe explicit fallback.
-
-Determinism:
-Fully deterministic unless the approved cost rule explicitly uses controlled randomness.
-```
+- [ ] code matches the approved contract;
+- [ ] portable state contains no Phaser objects;
+- [ ] the module does not command unrelated modules;
+- [ ] failure cases return explicit results;
+- [ ] optional absence behavior works;
+- [ ] deterministic tests pass where required;
+- [ ] state changes are traceable;
+- [ ] events report completed changes;
+- [ ] semantic signals are translated only after authoritative resolution;
+- [ ] registry maturity and activation are updated;
+- [ ] limitations are documented.
 
 ---
 
-## 23. Contract Principle
+## 17. Contract Principle
 
 ```text
 A module should be understandable without reading the whole game.
-A module has one primary kind.
-Architecture role, design maturity, and activation role answer different questions.
+A module has one Primary Kind.
+Architecture Role, Design Maturity, and Activation Role answer different questions.
+Design Accepted does not mean Implementation Ready.
+The registry sets a current-phase default; Resolver Contracts set action-specific participation.
 A Resolver combines modules without becoming all of them.
-A missing optional integration should reduce behavior, not break hidden assumptions.
-A missing required module should fail clearly.
-The master architecture should remain stable while focused contracts evolve.
+A missing optional integration reduces behavior.
+A missing required module fails clearly.
 ```
