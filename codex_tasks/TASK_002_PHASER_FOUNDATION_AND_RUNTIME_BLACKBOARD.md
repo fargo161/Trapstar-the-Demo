@@ -2,74 +2,101 @@
 
 ## Task Status
 
-Status: Ready for Codex
+Status: **Paused — Blocked by Module Definition**
+
+Do not hand this task to Codex and do not begin implementation until the prerequisites below are satisfied and Teddy explicitly reactivates the task.
 
 ---
 
-## Goal
+## Why This Task Is Paused
+
+The original task correctly identified the intended first Phaser interaction slice, but it was written before the module registry and contract standard existed.
+
+Several participating modules are still Design Drafts. Implementing now would require Codex to invent BASED, DPA, Information, TIME, REP, HEAT, resolver, state-transition, or outcome behavior.
+
+This task is preserved as the future Phaser foundation target. Its implementation details must be revised against accepted focused contracts before its status can return to `Ready for Codex`.
+
+---
+
+## Reactivation Prerequisites
+
+The selected thin slice requires sufficient contracts for:
+
+```text
+interaction.dpa
+interaction.based
+data.information
+resource.time
+resolver.interaction
+runtime.state
+runtime.outcome
+runtime.state_transition
+```
+
+Before reactivation:
+
+- `interaction.dpa` must be Implementation Ready for the selected frame behavior.
+- `interaction.based` must be Implementation Ready for the selected test Vibes.
+- `data.information` must be Implementation Ready for the selected Soft / Hard Info behavior.
+- `resource.time` must be Implementation Ready for the selected action costs.
+- `resolver.interaction` must define accepted actions, participating modules, validation, consequence phases, transition policy, and outcome responsibility.
+- `runtime.state`, `runtime.outcome`, and `runtime.state_transition` must be Implementation Ready for the thin slice.
+- `social.rep` and `social.heat` must each be either Implementation Ready and included or explicitly excluded from the revised task.
+
+No Design Draft module may be implemented through invented behavior.
+
+---
+
+## Preserved Goal
 
 Create the smallest Phaser 3.90 + TypeScript browser foundation that proves Trapstar's contained-complexity architecture through one complete interaction:
 
 ```text
 DPA + BASED Action Request
 -> InteractionResolver
--> small independent TIME / HEAT / REP / Info rules
+-> approved bounded modules
 -> ordered authoritative state transition
 -> explicit ResolvedOutcome
 -> Phaser runtime-blackboard presentation
 ```
 
-The task is complete when a player can choose Deal, Pressure, or Ask, select one BASED Vibe, submit the action, and see an explicit, deterministic resolution trace and updated state in the browser.
+The future task is complete when a tester can choose an approved DPA frame, select an approved BASED Vibe, submit an action, and see an explicit deterministic resolution trace and updated state in the browser.
 
 ---
 
-## Project Context
-
-Read first:
+## Required Reading After Reactivation
 
 ```text
 PROJECT_STATE.md
 docs/Trapstar_Master_System_Architecture.md
+docs/architecture/Trapstar_System_Registry.md
+docs/architecture/Trapstar_Module_Contract_Standard.md
 codex_tasks/TASK_TEMPLATE.md
 codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md
 ```
 
-Core rules:
-
-```text
-DPA chooses the strategic frame.
-BASED defines the manner of action.
-A specialized resolver coordinates the relevant systems.
-Each system owns one bounded category of rule.
-One ordered state transition applies the result.
-A ResolvedOutcome reports what happened.
-Phaser presents the result.
-```
-
-```text
-Commands change the world.
-Events report what changed.
-```
+The reactivated task must also list only the focused module references required by the approved thin slice.
 
 ---
 
 ## Report Before Coding
 
-Before implementation, Codex must report:
+After reactivation and before implementation, Codex must report:
 
-1. Its understanding of the task.
+1. Its understanding of the approved task.
 2. Exact files it will read.
 3. Exact files it plans to create or modify.
 4. The portable simulation versus Phaser presentation boundary.
-5. The proposed TypeScript types for content definitions, runtime state, action requests, state changes, and resolved outcomes.
-6. The responsibility of `InteractionResolver`.
-7. The responsibility of each small participating system.
-8. The exact consequence order.
-9. The tests it will create.
-10. Risks or missing information.
-11. The smallest safe implementation plan.
+5. The selected modules and their activation roles for each test action.
+6. The proposed portable TypeScript types.
+7. The responsibility of `InteractionResolver`.
+8. The responsibility of each participating module.
+9. The exact consequence order.
+10. The tests it will create.
+11. Risks, unresolved conflicts, or missing information.
+12. The smallest safe implementation plan.
 
-Do not begin implementation until Teddy approves the report.
+Codex must wait for Teddy's approval after this report.
 
 ---
 
@@ -79,9 +106,7 @@ Do not begin implementation until Teddy approves the report.
 PhaserProject/
 ```
 
-Codex may initialize the minimum files required for a Phaser 3.90 + TypeScript browser project after approval.
-
-Preferred high-level structure:
+Preferred high-level structure after reactivation:
 
 ```text
 PhaserProject/
@@ -98,10 +123,7 @@ PhaserProject/
       stateTransition.ts
       seededRandom.ts
       systems/
-        timeSystem.ts
-        heatSystem.ts
-        relationshipSystem.ts
-        infoSystem.ts
+        [only approved modules]
     resolution/
       actionRequest.ts
       resolvedOutcome.ts
@@ -114,47 +136,32 @@ PhaserProject/
     interactionResolver.test.ts
 ```
 
-The exact filenames may be adjusted in the report if Codex gives a clear reason, but the responsibility boundaries must remain intact.
+The exact filenames may change in the approved Codex report, but the responsibility boundaries may not.
 
 ---
 
-## Required Demo Content
+## Minimum Preserved Demo Content
 
-Use a minimal fixed content set:
+The future slice should remain small:
 
 - one player ID;
 - one NPC ID;
 - one location ID;
-- one Soft Info card;
-- one Hard Info card or hardening path;
-- one personal REP value;
-- one player HEAT value;
-- one run seed;
-- one simple target request, such as asking the NPC to disclose information.
+- one approved Soft Info example;
+- one approved Hard Info example or hardening path;
+- one run seed when controlled randomness is used;
+- one simple requested result;
+- only the state values required by approved participating modules.
 
 Use stable string IDs. Do not use Phaser objects as identity.
 
 ---
 
-## Required DPA and BASED Input
+## DPA and BASED Input
 
-The browser scene must allow the tester to choose:
+The browser scene should allow only the frames and Vibes approved by the focused contracts.
 
-```text
-Deal
-Pressure
-Ask
-```
-
-and at least three test Vibes, including:
-
-```text
-AB_Menacing
-SA_Charismatic
-SE_Compassionate
-```
-
-The submitted `ActionRequest` should contain, where relevant:
+The future `ActionRequest` should contain only approved fields, potentially including:
 
 ```text
 actorId
@@ -169,13 +176,13 @@ locationId
 witnessIds
 ```
 
-No UI choice should directly mutate HEAT, REP, TIME, or Info state.
+No UI choice may directly mutate simulation state.
 
 ---
 
-## Required Portable Types
+## Portable Types
 
-Codex should define small explicit types or interfaces for:
+The reactivated task should define small plain-data types for the approved slice, expected to include:
 
 - `ContentDefinitions`
 - `RuntimeState`
@@ -183,193 +190,108 @@ Codex should define small explicit types or interfaces for:
 - `ValidationResult`
 - `StateChange`
 - `ResolvedOutcome`
-- `PresentationCue`
+- semantic outcome signals
+- presentation instructions produced by the Presentation Adapter
 
-`RuntimeState` and `ResolvedOutcome` must contain plain data only.
-
----
-
-## Required Independent Systems
-
-Implement only the smallest useful versions of:
-
-### TIME System
-
-Owns the selected action's minute cost and time advancement contribution.
-
-### HEAT System
-
-Owns legal/public-attention contribution based on frame, location, leverage, and witnesses.
-
-### Relationship System
-
-Owns the personal REP contribution between the NPC and player.
-
-### Info System
-
-Owns whether the NPC discloses, withholds, or hardens information.
-
-Each system should return a calculation or proposed state change. It should not directly command another system or Phaser object.
+Portable types must contain no Phaser objects.
 
 ---
 
-## InteractionResolver Responsibility
+## InteractionResolver Boundary
 
-`InteractionResolver` should:
+`InteractionResolver` may:
 
-1. receive the current state, content, action request, and controlled random source;
-2. validate the action;
-3. gather the required context;
-4. call the small participating systems in a visible order;
-5. combine their proposed changes;
-6. apply one authoritative state transition;
-7. process ordered secondary checks required by this task;
-8. return the updated state and one explicit `ResolvedOutcome`.
+1. receive current state, content, an ActionRequest, and controlled randomness when approved;
+2. validate the request;
+3. identify required and optional modules by action type;
+4. call modules in the documented order;
+5. combine proposed changes;
+6. resolve conflicts according to its contract;
+7. apply one authoritative state transition;
+8. process approved secondary checks;
+9. return updated state and one explicit `ResolvedOutcome`;
+10. hand semantic signals to presentation after truth is established.
 
-It should not contain every internal HEAT, REP, TIME, or Info rule itself.
+It must not contain every internal BASED, Info, TIME, REP, HEAT, inventory, mission, or presentation rule.
 
 ---
 
-## Required Consequence Order
+## Consequence Order
 
-For this task use:
+The exact sequence must come from the approved Resolver Contract.
+
+The future task must still preserve these principles:
 
 ```text
-1. Validate action.
-2. Resolve primary social / information result.
-3. Calculate REP contribution.
-4. Calculate HEAT contribution.
-5. Calculate TIME cost.
-6. Apply one state transition.
-7. Check simple threshold or mission/debug consequences.
-8. Build ResolvedOutcome.
-9. Send presentation cues to Phaser.
-10. Restore input.
+validate before calculation
+calculate before transition
+apply one authoritative transition
+process secondary checks in a documented order
+build one explicit outcome
+translate semantic signals after resolution
+restore input last
 ```
 
-Animation timing must not determine in-world TIME cost.
+Real-time animation duration must not determine in-world TIME cost.
 
 ---
 
-## Required ResolvedOutcome Fields
+## Runtime Blackboard
 
-Include at least:
-
-```text
-actionId
-resolver
-valid
-result
-primaryReason
-frame
-vibe
-stateChanges
-timeSpent
-infoChanges
-repChanges
-heatChanges
-secondaryConsequences
-presentationCues
-debugTrace
-```
-
-The exact shape may be refined in the report, but the outcome must make cause and effect explicit.
-
----
-
-## Runtime Blackboard Requirements
-
-Display:
+The future blackboard should display only the approved thin-slice information, including:
 
 ### Current state
 
-- run seed;
-- current day and minute;
-- player HEAT;
-- personal REP;
-- known Soft and Hard Info;
+- run seed when relevant;
+- current day and minute when TIME participates;
 - player and NPC IDs;
-- current location.
+- current location;
+- approved information state;
+- REP or HEAT only when those modules are included.
 
 ### Selected request
 
 - DPA frame;
 - BASED Vibe;
-- request target;
-- leverage or offer.
+- target;
+- approved offer, demand, leverage, or requested-result fields.
 
 ### Last resolution
 
 - resolver;
-- validation;
+- validation result;
+- modules consulted;
+- modules skipped or excluded;
 - primary result;
-- old and new values;
-- ordered state changes;
-- TIME spent;
-- secondary consequences;
-- presentation events.
+- proposed and applied changes;
+- ordered secondary checks;
+- semantic outcome signals;
+- presentation instructions.
 
 ### Controls
 
-- frame selection;
-- Vibe selection;
+- approved frame selection;
+- approved Vibe selection;
 - submit action;
 - reset fixed state;
-- replay with same seed.
-
----
-
-## Events and Presentation
-
-After an authoritative outcome exists, the presentation adapter may emit or invoke cues such as:
-
-```text
-hud_time_changed
-hud_heat_changed
-hud_rep_changed
-info_disclosed
-npc_recoils
-npc_opens_up
-dialogue_result
-```
-
-These cues may update UI, text, animation placeholders, or logs. They must not become the hidden owner of critical state changes.
+- replay with the same seed when applicable.
 
 ---
 
 ## Automated Test Requirements
 
-At minimum test:
+After reactivation, test at minimum:
 
-1. The same state, request, and seed produce the same outcome.
-2. A valid action returns the expected resolver name.
-3. DPA and BASED remain separate fields.
-4. Systems return bounded contributions.
-5. State changes occur in the documented order.
-6. TIME advances by the rule result, not animation duration.
-7. Phaser objects are absent from runtime state and resolved outcomes.
-8. Presentation cues appear only after resolution.
-9. Reset restores the original test state.
-
-Use the lightest testing setup compatible with the chosen project foundation.
-
----
-
-## Browser Test Steps
-
-After implementation:
-
-1. Install dependencies.
-2. Start the development server.
-3. Open the local browser build.
-4. Confirm the runtime blackboard loads.
-5. Select `Pressure` and `AB_Menacing`.
-6. Submit the action.
-7. Confirm Info, REP, HEAT, and TIME changes match the visible outcome trace.
-8. Reset.
-9. Repeat with the same seed and confirm the same result.
-10. Test `Ask` with `SE_Compassionate` and confirm a different bounded result.
-11. Confirm the browser console has no errors.
+1. Identical state, request, and seed produce identical outcomes when randomness participates.
+2. DPA and BASED remain separate fields and responsibilities.
+3. Required-module absence fails clearly without a state transition.
+4. Optional-module absence follows the documented reduced path.
+5. Modules return bounded calculations or proposals.
+6. State changes occur through one documented transition.
+7. TIME uses rule data rather than animation duration.
+8. Portable state and outcomes contain no Phaser objects.
+9. Semantic signals occur only after authoritative resolution.
+10. Reset restores the original test state.
 
 ---
 
@@ -377,52 +299,50 @@ After implementation:
 
 Do not:
 
-- build final movement or map traversal;
+- build final movement or traversal;
 - build the full Stolen Package generator;
 - create full NPC AI;
-- create the full dialogue system;
+- create a full dialogue engine;
 - implement all 20 Vibes;
-- implement full FAC, FAVOR, ACCESS, or LORE rules;
+- implement modules not approved for the slice;
 - implement combat;
 - implement final save/load;
-- add production art or final animation;
+- add production art;
 - add live LLM/API calls;
 - create a universal manager;
 - hide simulation logic in Phaser scenes or event listeners;
-- add unrelated dependencies or systems.
+- invent rules from Design Draft documents.
 
 ---
 
-## Acceptance Criteria
+## Reactivation Checklist
 
-This task is complete when:
+Task 002 may return to `Ready for Codex` only when:
 
-- the Phaser 3.90 + TypeScript project runs in a browser;
-- the runtime blackboard is visible;
-- one complete DPA + BASED action resolves through `InteractionResolver`;
-- TIME, HEAT, REP, and Info rules are separate and bounded;
-- one ordered state transition updates authoritative state;
-- one explicit `ResolvedOutcome` explains the result;
-- presentation cues occur after resolution;
-- deterministic tests pass;
-- no Phaser objects exist in portable runtime state;
-- no universal manager owns the full game;
-- Codex supplies exact browser test instructions and a completion report.
+- [ ] the System Registry identifies every participating module;
+- [ ] each required module is Implementation Ready for the selected slice;
+- [ ] REP and HEAT are each included or explicitly excluded;
+- [ ] the Resolver Contract defines action-specific activation and order;
+- [ ] the runtime and outcome contracts are explicit;
+- [ ] the task lists exact focused references;
+- [ ] acceptance criteria match the approved module set;
+- [ ] Teddy explicitly authorizes reactivation.
 
 ---
 
-## Completion Report
+## Preserved Architecture Principle
 
-Codex must report:
+```text
+DPA chooses the strategic frame.
+BASED defines the manner of action.
+Resolvers coordinate approved modules.
+Modules own bounded consequences.
+One transition establishes authoritative truth.
+ResolvedOutcome explains what happened.
+Phaser presents the result.
+```
 
-1. Files created or modified.
-2. Dependencies added and why.
-3. Portable simulation structure.
-4. Phaser presentation structure.
-5. Resolver and system responsibilities.
-6. Consequence order.
-7. Automated test results.
-8. Browser test steps.
-9. Screens or controls implemented.
-10. Known limitations.
-11. Recommended next bounded task.
+```text
+Commands change the world.
+Events report what changed.
+```
