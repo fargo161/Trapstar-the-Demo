@@ -51,7 +51,7 @@ Required principles:
 
 - each module has one Primary Kind;
 - each module owns one bounded responsibility;
-- Architecture Role, Design Maturity, and Activation Role are separate;
+- Architecture Role, Design Maturity, and activation fields are separate;
 - modules propose changes only within their authority;
 - modules do not directly mutate unrelated state;
 - resolvers coordinate cross-module actions without absorbing every internal rule;
@@ -60,7 +60,8 @@ Required principles:
 - Phaser objects never become portable state or stable identity;
 - gameplay randomness is controlled and reproducible;
 - optional integrations have explicit absence behavior;
-- missing required modules fail visibly and safely.
+- missing required modules fail visibly and safely;
+- shared structures have one recorded owner.
 
 ---
 
@@ -68,14 +69,7 @@ Required principles:
 
 The System Registry, this Contract Standard, and other architecture-governance documents are not gameplay modules.
 
-They are exempt from gameplay-module requirements such as:
-
-- Module ID;
-- Current-Phase Default Activation;
-- action-specific Activation Role;
-- runtime inputs and outputs;
-- resolver participation;
-- semantic outcome signals.
+They are exempt from gameplay-module requirements such as Module ID, Demo Default Activation, action-specific Activation Role, runtime inputs and outputs, resolver participation, and semantic outcome signals.
 
 They should still record their document role, Architecture Role, Design Maturity, and authority relationship.
 
@@ -88,10 +82,10 @@ They should still record their document role, Architecture Role, Design Maturity
 | `README.md` | Introduction and navigation. |
 | `PROJECT_STATE.md` | Current phase, blockers, priorities, and approved next work. |
 | Master System Architecture | Universal cross-project design and technical boundaries. |
-| System Registry | Module identity, Primary Kind, Architecture Role, Design Maturity, Current-Phase Default Activation, and authority location. |
+| System Registry | Module identity, Primary Kind, Architecture Role, Design Maturity, Demo Default Activation, and authority location. |
 | Focused module reference | Detailed authority for the named module. |
 | Design packet | Implementation-ready feature or content specification. |
-| Resolver Contract | Action-specific module participation and consequence order. |
+| Resolver Contract | Action-specific participation and consequence order. |
 | Codex task | One bounded implementation order. |
 | Implementation and tests | Evidence that approved behavior works. |
 
@@ -153,31 +147,58 @@ Removed
 
 ### 5.4 Activation Scope
 
-The System Registry records **Current-Phase Default Activation**.
+Three related concepts must not be combined:
 
-Focused contracts record:
+#### Demo Default Activation
+
+Stored in the System Registry:
 
 ```text
-Activation role for this contract or slice:
 Required
 Optional Integration
 Deferred Integration
 ```
 
-Resolver Contracts are the final authority for action-specific participation.
+This describes expected participation in the intended demo architecture, not current work status.
+
+#### Current production status
+
+Stored in `PROJECT_STATE.md`:
+
+```text
+Active
+Paused
+Blocked
+Not yet scheduled
+```
+
+This describes what work is happening now.
+
+#### Action-specific participation
+
+Stored in Resolver Contracts:
+
+```text
+Required
+Optional Integration
+Not Consulted
+```
+
+This describes participation in one action type.
 
 Example:
 
 ```text
 social.heat
-Registry default: Optional Integration
+Demo Default Activation: Optional Integration
+Current production status: Not yet Implementation Ready
 
 Public Pressure: Required
 Private Ask: Optional Integration
-Inventory-only action: Not consulted
+Inventory-only action: Not Consulted
 ```
 
-A resolver may differ from the registry default only within its approved scope and must state the difference explicitly.
+A resolver may differ from the demo default only within its approved scope and must state the difference explicitly.
 
 ---
 
@@ -194,6 +215,7 @@ Every focused module reference should begin with:
 **Primary Kind:** `[one kind]`  
 **Architecture Role:** `Core / Supporting`  
 **Design Maturity:** `Design Draft / Design Accepted / Implementation Ready / Prototype Active / Experimental / Superseded / Removed`  
+**Demo Default Activation:** `Required / Optional Integration / Deferred Integration`  
 **Activation Role for this contract or slice:** `Required / Optional Integration / Deferred Integration`  
 **Contract Profile:** `Lightweight / Standard / Resolver`  
 **Detailed Authority:** `This file controls ...`  
@@ -208,13 +230,7 @@ Module IDs should be stable, lowercase, and namespaced. File names may change; M
 
 ### 7.1 Lightweight Contract
 
-Use for:
-
-- Design Philosophies;
-- Choice Frames;
-- conceptual Action Language references;
-- simple Data Models;
-- small presentation or infrastructure standards that do not calculate gameplay outcomes.
+Use for Design Philosophies, Choice Frames, conceptual Action Language references, simple Data Models, and small presentation or infrastructure standards that do not calculate gameplay outcomes.
 
 Required sections:
 
@@ -230,13 +246,7 @@ Required sections:
 
 ### 7.2 Standard Module Contract
 
-Use for:
-
-- Rule Modules;
-- substantial Data Models;
-- Scenario Modules;
-- implementation-facing Presentation Modules;
-- Infrastructure Modules that participate directly in authoritative behavior.
+Use for Rule Modules, substantial Data Models, Scenario Modules, implementation-facing Presentation Modules, and Infrastructure Modules that participate directly in authoritative behavior.
 
 Required sections:
 
@@ -264,9 +274,7 @@ Required sections:
 
 ### 7.3 Resolver Contract
 
-Use only for Resolver modules.
-
-It includes the relevant Standard sections plus:
+Use only for Resolver modules. It includes the relevant Standard sections plus:
 
 1. Accepted Action Types
 2. Required Modules by Action Type
@@ -300,7 +308,50 @@ A module may use a stricter profile than its default. It may not omit sections r
 
 ---
 
-## 8. Lightweight Template
+## 8. Shared Structure Ownership
+
+A shared interface or data shape is not automatically a separate module, but it must have one owning module.
+
+| Shared structure or responsibility | Owning module |
+|---|---|
+| `InfoCard` schema | `data.info_cards` |
+| Soft / Hard information behavior | `data.information` |
+| `ContentDefinitions` | `runtime.content_definitions` |
+| `RuntimeState` | `runtime.state` |
+| `ActionRequest` | `resolver.interaction` |
+| `ValidationResult` | `resolver.interaction` |
+| `StateChange` | `runtime.state_transition` |
+| authoritative transition application | `runtime.state_transition` |
+| `ResolvedOutcome` | `runtime.outcome` |
+| stable identity rules | `infra.ids` |
+| controlled random source | `infra.random` |
+| test harness and deterministic acceptance rules | `infra.tests` |
+| presentation instructions | `presentation.adapter` |
+| blackboard display model and controls | `presentation.blackboard` |
+
+Ownership means the named contract controls the shape, validation rules, and compatibility expectations. Other modules may use the structure but must not silently redefine it.
+
+---
+
+## 9. Contract Prerequisites Versus Implementation Deliverables
+
+A contract being required before a task begins does not mean its implementation must already exist.
+
+Example:
+
+```text
+presentation.blackboard contract
+-> must be Implementation Ready before Task 002 is reactivated
+
+presentation.blackboard implementation
+-> may be produced by Task 002
+```
+
+The same rule applies to other Task 002 deliverables. Design must be ready before coding begins; implementation may then be created by the approved task.
+
+---
+
+## 10. Lightweight Template
 
 ```markdown
 # [Module Name]
@@ -311,10 +362,9 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Primary Kind:** `[kind]`  
 **Architecture Role:** `[Core / Supporting]`  
 **Design Maturity:** `[maturity]`  
+**Demo Default Activation:** `[role]`  
 **Activation Role for this contract or slice:** `[role]`  
-**Contract Profile:** `Lightweight`  
-**Detailed Authority:** `This file controls ...`  
-**Last updated:** `[date]`
+**Contract Profile:** `Lightweight`
 
 ## 1. Purpose
 ## 2. Architecture Relationship
@@ -329,7 +379,7 @@ A module may use a stricter profile than its default. It may not omit sections r
 
 ---
 
-## 9. Standard Template
+## 11. Standard Template
 
 ```markdown
 # [Module Name]
@@ -340,17 +390,14 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Primary Kind:** `[kind]`  
 **Architecture Role:** `[Core / Supporting]`  
 **Design Maturity:** `[maturity]`  
+**Demo Default Activation:** `[role]`  
 **Activation Role for this contract or slice:** `[role]`  
-**Contract Profile:** `Standard`  
-**Detailed Authority:** `This file controls ...`  
-**Last updated:** `[date]`
+**Contract Profile:** `Standard`
 
 ## 1. Purpose
 ## 2. Owns
 ## 3. Does Not Own
 ## 4. Inputs
-### Required
-### Optional
 ## 5. Outputs
 ## 6. State Read
 ## 7. State Changes Proposed
@@ -372,7 +419,7 @@ A module may use a stricter profile than its default. It may not omit sections r
 
 ---
 
-## 10. Resolver Template
+## 12. Resolver Template
 
 ```markdown
 # [Resolver Name]
@@ -383,10 +430,9 @@ A module may use a stricter profile than its default. It may not omit sections r
 **Primary Kind:** `Resolver`  
 **Architecture Role:** `[Core / Supporting]`  
 **Design Maturity:** `[maturity]`  
+**Demo Default Activation:** `[role]`  
 **Activation Role for this contract or slice:** `[role]`  
-**Contract Profile:** `Resolver`  
-**Detailed Authority:** `This file controls ...`  
-**Last updated:** `[date]`
+**Contract Profile:** `Resolver`
 
 ## 1. Purpose
 ## 2. Owns
@@ -418,63 +464,35 @@ A module may use a stricter profile than its default. It may not omit sections r
 
 ---
 
-## 11. Standard Section Guidance
+## 13. Standard Guidance
 
-### Owns and Does Not Own
+### Ownership and boundaries
 
 State the exact category of rules or data the module controls and explicitly name nearby responsibilities it does not control.
 
-### Inputs and Outputs
+### Inputs and outputs
 
 Use the smallest useful plain-data context. Rule Modules should return calculations or proposals rather than directly mutate global state.
 
-Example:
-
-```text
-{
-  moduleId,
-  accepted,
-  proposedChanges,
-  reasons,
-  secondaryChecks,
-  semanticSignals,
-  debugTrace
-}
-```
-
-### State Boundaries
+### State boundaries
 
 List state fields the module may read and state paths it may propose changing. A proposal is not permission to mutate immediately.
 
-### Dependencies and Integrations
+### Dependencies and integrations
 
 Required dependencies must be few and explicit. Optional integrations must define absence behavior. Rule Modules should normally call no unrelated Rule Modules; cross-module coordination belongs in a Resolver.
 
-### Validation and Failure
+### Validation and failure
 
-Define behavior for missing inputs, invalid IDs, forbidden actions, unavailable required modules, absent optional context, out-of-range values, and content/runtime disagreement.
-
-Failures return explicit data. They do not silently do nothing.
+Define behavior for missing inputs, invalid IDs, forbidden actions, unavailable required modules, absent optional context, out-of-range values, and content/runtime disagreement. Failures return explicit data.
 
 ### Determinism
 
-State whether the module is fully deterministic, may use controlled randomness, records random draws or seed position, and returns the same result for identical input and seed.
+State whether the module is fully deterministic, may use controlled randomness, records random draws or seed position, and returns the same result for identical input and seed. Uncontrolled randomness is prohibited for gameplay truth.
 
-Uncontrolled randomness is prohibited for gameplay truth.
+### Semantic outcome signals
 
-### Semantic Outcome Signals
-
-Simulation modules may report semantic facts:
-
-```text
-heat_changed
-heat_threshold_crossed
-relationship_shifted
-information_disclosed
-time_advanced
-```
-
-They must not prescribe camera shake, HUD flashing, animation names, or audio clips. The Presentation Adapter translates semantic signals into Phaser-facing cues.
+Simulation modules may report semantic facts such as `heat_changed`, `relationship_shifted`, `information_disclosed`, and `time_advanced`. They must not prescribe camera shake, HUD flashing, animation names, or audio clips.
 
 ### Events
 
@@ -482,7 +500,7 @@ Events report completed results. They do not become hidden owners of critical st
 
 ---
 
-## 12. Data Ownership Rules
+## 14. Data Ownership Rules
 
 ```text
 Content Definitions = what something is
@@ -492,18 +510,11 @@ Resolver = which modules participate and in what order
 Presentation = how the result is shown
 ```
 
-A value is not automatically a module:
-
-- `heat: 3` is state;
-- HEAT calculation belongs to `social.heat`;
-- `currentMinute: 480` is state;
-- TIME rules belong to `resource.time`.
-
-Portable state must not contain Phaser scenes, sprites, cameras, containers, animation objects, physics bodies, DOM nodes, or event emitters.
+A value is not automatically a module. Portable state must not contain Phaser scenes, sprites, cameras, containers, animation objects, physics bodies, DOM nodes, or event emitters.
 
 ---
 
-## 13. Required, Optional, and Deferred Behavior
+## 15. Required, Optional, and Deferred Behavior
 
 ```text
 required module unavailable
@@ -528,7 +539,7 @@ deferred integration
 
 ---
 
-## 14. Design-Maturity Gates
+## 16. Design-Maturity Gates
 
 ### Design Draft
 
@@ -540,18 +551,7 @@ The concept and architecture relationship are approved. It may guide naming and 
 
 ### Implementation Ready
 
-The selected slice has:
-
-- clear purpose and ownership;
-- one Primary Kind;
-- explicit inputs and outputs;
-- state-read and proposed-change boundaries;
-- required dependencies and optional integrations;
-- failure behavior;
-- determinism requirements;
-- consequence participation;
-- tests;
-- no blocking open questions.
+The selected slice has clear purpose and ownership, one Primary Kind, explicit interfaces, state boundaries, dependencies, failure behavior, determinism, consequence participation, tests, and no blocking open questions.
 
 ### Prototype Active
 
@@ -559,7 +559,7 @@ Implementation exists, tests pass, relevant browser behavior is verified, docume
 
 ---
 
-## 15. Definition of Ready Checklist
+## 17. Definition of Ready Checklist
 
 Before a module is named in an implementation task:
 
@@ -567,22 +567,22 @@ Before a module is named in an implementation task:
 - [ ] one Primary Kind;
 - [ ] Architecture Role recorded;
 - [ ] Design Maturity permits implementation;
+- [ ] Demo Default Activation recorded;
 - [ ] Activation Role explicit for the intended slice;
 - [ ] registry entry exists;
 - [ ] ownership is bounded;
+- [ ] shared structures have one owner;
 - [ ] profile is appropriate;
-- [ ] interfaces are explicit where relevant;
-- [ ] state boundaries are explicit where relevant;
+- [ ] interfaces and state boundaries are explicit;
 - [ ] required dependencies and optional integrations are explicit;
 - [ ] missing-module behavior is explicit;
-- [ ] determinism is explicit;
+- [ ] determinism and tests are explicit;
 - [ ] resolver participation is explicit where relevant;
-- [ ] tests are specified;
 - [ ] blocking questions are resolved.
 
 ---
 
-## 16. Definition of Done Checklist
+## 18. Definition of Done Checklist
 
 - [ ] code matches the approved contract;
 - [ ] portable state contains no Phaser objects;
@@ -598,14 +598,17 @@ Before a module is named in an implementation task:
 
 ---
 
-## 17. Contract Principle
+## 19. Contract Principle
 
 ```text
 A module should be understandable without reading the whole game.
 A module has one Primary Kind.
-Architecture Role, Design Maturity, and Activation Role answer different questions.
+Architecture Role, Design Maturity, and activation fields answer different questions.
 Design Accepted does not mean Implementation Ready.
-The registry sets a current-phase default; Resolver Contracts set action-specific participation.
+The registry sets a Demo Default Activation.
+PROJECT_STATE records current production status.
+Resolver Contracts set action-specific participation.
+Shared structures have one owner.
 A Resolver combines modules without becoming all of them.
 A missing optional integration reduces behavior.
 A missing required module fails clearly.
