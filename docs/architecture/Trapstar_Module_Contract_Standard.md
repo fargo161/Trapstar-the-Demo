@@ -14,8 +14,6 @@
 
 This standard defines how modular parts of *Trapstar the Demo* should be documented and implemented.
 
-Its purpose is to let modules be added, refined, enabled, disabled, deferred, replaced, or removed without turning the project into one tightly coupled block.
-
 A useful contract makes clear:
 
 1. what the module owns;
@@ -23,11 +21,12 @@ A useful contract makes clear:
 3. its one Primary Kind;
 4. its Architecture Role;
 5. its Design Maturity;
-6. its Activation Role for the named contract or slice;
-7. what it receives and returns;
-8. what happens when it or an integration is unavailable.
+6. its Demo Default Activation;
+7. its Activation Role for the named contract or slice;
+8. what it receives and returns;
+9. what happens when it or an integration is unavailable.
 
-Not every module needs the same amount of documentation. This standard therefore defines Lightweight, Standard, and Resolver contract profiles.
+Not every module needs the same amount of documentation. This standard defines Lightweight, Standard, and Resolver profiles.
 
 ---
 
@@ -39,11 +38,11 @@ Events report what changed.
 ```
 
 ```text
-Action Request
--> Resolver
--> Bounded Modules
--> Ordered State Transition
--> Resolved Outcome
+ActionRequest
+-> specialized Resolver
+-> bounded Rule Modules
+-> ordered State Transition
+-> ResolvedOutcome
 -> Presentation / Notifications
 ```
 
@@ -51,17 +50,17 @@ Required principles:
 
 - each module has one Primary Kind;
 - each module owns one bounded responsibility;
-- Architecture Role, Design Maturity, and activation fields are separate;
+- data ownership and behavior ownership remain distinct;
+- shared structures have one recorded owner;
 - modules propose changes only within their authority;
 - modules do not directly mutate unrelated state;
 - resolvers coordinate cross-module actions without absorbing every internal rule;
-- one authoritative transition applies accepted state changes;
+- one authoritative transition applies accepted changes;
 - presentation does not create gameplay truth;
 - Phaser objects never become portable state or stable identity;
 - gameplay randomness is controlled and reproducible;
 - optional integrations have explicit absence behavior;
-- missing required modules fail visibly and safely;
-- shared structures have one recorded owner.
+- missing required modules fail visibly and safely.
 
 ---
 
@@ -69,9 +68,7 @@ Required principles:
 
 The System Registry, this Contract Standard, and other architecture-governance documents are not gameplay modules.
 
-They are exempt from gameplay-module requirements such as Module ID, Demo Default Activation, action-specific Activation Role, runtime inputs and outputs, resolver participation, and semantic outcome signals.
-
-They should still record their document role, Architecture Role, Design Maturity, and authority relationship.
+They are exempt from gameplay-module requirements such as Module ID, Demo Default Activation, runtime interfaces, resolver participation, and semantic outcome signals. They should still record their document role, Architecture Role, Design Maturity, and authority relationship.
 
 ---
 
@@ -81,11 +78,10 @@ They should still record their document role, Architecture Role, Design Maturity
 |---|---|
 | `README.md` | Introduction and navigation. |
 | `PROJECT_STATE.md` | Current phase, blockers, priorities, and approved next work. |
-| Master System Architecture | Universal cross-project design and technical boundaries. |
-| System Registry | Module identity, Primary Kind, Architecture Role, Design Maturity, Demo Default Activation, and authority location. |
+| Master System Architecture | Universal design and technical boundaries. |
+| System Registry | Module identity, kind, role, maturity, Demo Default Activation, ownership, and authority location. |
 | Focused module reference | Detailed authority for the named module. |
-| Design packet | Implementation-ready feature or content specification. |
-| Resolver Contract | Action-specific participation and consequence order. |
+| Resolver Contract | Action-specific participation, validation, coordination, and consequence order. |
 | Codex task | One bounded implementation order. |
 | Implementation and tests | Evidence that approved behavior works. |
 
@@ -111,7 +107,11 @@ Presentation Module
 Infrastructure Module
 ```
 
-A module may own data, use infrastructure, or sit on a boundary without receiving a second Primary Kind.
+A Data Model owns a portable shape or authoritative state model. It does not calculate how that state changes.
+
+A Rule Module owns one bounded category of gameplay calculation. It may propose changes but does not silently redefine the data structures it reads or writes.
+
+A Resolver coordinates accepted actions and participating modules. It does not own the generic request envelope unless the request is explicitly resolver-specific.
 
 ### 5.2 Architecture Role
 
@@ -119,9 +119,6 @@ A module may own data, use infrastructure, or sit on a boundary without receivin
 Core
 Supporting
 ```
-
-- **Core** — foundational to project identity or minimum architecture.
-- **Supporting** — additive, specialized, or phase-dependent.
 
 ### 5.3 Design Maturity
 
@@ -135,19 +132,11 @@ Superseded
 Removed
 ```
 
-- **Design Draft** — important details remain unresolved.
-- **Design Accepted** — concept and architectural relationship are approved, but the implementation-facing contract is incomplete.
-- **Implementation Ready** — the selected slice has complete ownership, interfaces, dependencies, failure behavior, determinism, order, and tests.
-- **Prototype Active** — implemented, tested, verified, and accurately documented.
-- **Experimental** — isolated trial, not canonical.
-- **Superseded** — replaced but retained for history.
-- **Removed** — no longer accepted.
-
-`Design Accepted` is safe for naming, planning, compatibility, and high-level design. It is not sufficient by itself for implementation.
+`Design Accepted` is safe for planning, naming, and compatibility. It is not sufficient by itself for implementation.
 
 ### 5.4 Activation Scope
 
-Three related concepts must not be combined:
+Three related concepts must not be combined.
 
 #### Demo Default Activation
 
@@ -158,8 +147,6 @@ Required
 Optional Integration
 Deferred Integration
 ```
-
-This describes expected participation in the intended demo architecture, not current work status.
 
 #### Current production status
 
@@ -172,8 +159,6 @@ Blocked
 Not yet scheduled
 ```
 
-This describes what work is happening now.
-
 #### Action-specific participation
 
 Stored in Resolver Contracts:
@@ -183,22 +168,6 @@ Required
 Optional Integration
 Not Consulted
 ```
-
-This describes participation in one action type.
-
-Example:
-
-```text
-social.heat
-Demo Default Activation: Optional Integration
-Current production status: Not yet Implementation Ready
-
-Public Pressure: Required
-Private Ask: Optional Integration
-Inventory-only action: Not Consulted
-```
-
-A resolver may differ from the demo default only within its approved scope and must state the difference explicitly.
 
 ---
 
@@ -222,7 +191,7 @@ Every focused module reference should begin with:
 **Last updated:** `YYYY-MM-DD`
 ```
 
-Module IDs should be stable, lowercase, and namespaced. File names may change; Module IDs should change only when conceptual identity changes.
+Module IDs should be stable, lowercase, and namespaced.
 
 ---
 
@@ -246,7 +215,7 @@ Required sections:
 
 ### 7.2 Standard Module Contract
 
-Use for Rule Modules, substantial Data Models, Scenario Modules, implementation-facing Presentation Modules, and Infrastructure Modules that participate directly in authoritative behavior.
+Use for Rule Modules, substantial Data Models, Scenario Modules, implementation-facing Presentation Modules, and authoritative Infrastructure Modules.
 
 Required sections:
 
@@ -277,49 +246,38 @@ Required sections:
 Use only for Resolver modules. It includes the relevant Standard sections plus:
 
 1. Accepted Action Types
-2. Required Modules by Action Type
-3. Optional Modules by Action Type
-4. Modules Not Consulted by Action Type
-5. Validation Stages
-6. Exact Consequence Phases
-7. Conflict-Resolution Policy
-8. State-Transition Policy
-9. Secondary-Check Order
-10. ResolvedOutcome Responsibility
-11. Presentation Handoff
-12. Input Locking and Restoration Boundary
-13. Resolver-Specific Tests
+2. Request types accepted
+3. Required Modules by Action Type
+4. Optional Modules by Action Type
+5. Modules Not Consulted by Action Type
+6. Validation Stages
+7. Exact Consequence Phases
+8. Conflict-Resolution Policy
+9. State-Transition Policy
+10. Secondary-Check Order
+11. ResolvedOutcome Responsibility
+12. Presentation Handoff
+13. Input Locking and Restoration Boundary
+14. Resolver-Specific Tests
 
-### 7.4 Default Profile by Primary Kind
-
-| Primary Kind | Default Profile |
-|---|---|
-| Design Philosophy | Lightweight |
-| Choice Frame | Lightweight |
-| Action Language | Lightweight until implementation-facing; Standard when calculating or proposing effects |
-| Data Model | Lightweight for simple schemas; Standard for substantial authoritative models |
-| Rule Module | Standard |
-| Resolver | Resolver |
-| Scenario Module | Standard |
-| Presentation Module | Lightweight or Standard according to responsibility |
-| Infrastructure Module | Lightweight or Standard according to responsibility |
-
-A module may use a stricter profile than its default. It may not omit sections required by its real responsibility.
+A Resolver Contract must state whether it accepts the generic `ActionRequest` directly or a resolver-specific narrowed request derived from it.
 
 ---
 
-## 8. Shared Structure Ownership
+## 8. Shared Structure and Behavior Ownership
 
-A shared interface or data shape is not automatically a separate module, but it must have one owning module.
+A shared interface, data shape, or behavioral category is not automatically a separate module, but it must have one owner.
 
-| Shared structure or responsibility | Owning module |
+| Structure or responsibility | Owning module |
 |---|---|
 | `InfoCard` schema | `data.info_cards` |
-| Soft / Hard information behavior | `data.information` |
+| Soft / Hard information state and classification | `data.information` |
+| disclosure, withholding, hardening, and reveal eligibility | `information.rules` |
 | `ContentDefinitions` | `runtime.content_definitions` |
+| generic routing-neutral `ActionRequest` | `runtime.action_request` |
 | `RuntimeState` | `runtime.state` |
-| `ActionRequest` | `resolver.interaction` |
-| `ValidationResult` | `resolver.interaction` |
+| interaction validation policy | `resolver.interaction` |
+| `InteractionValidationResult` | `resolver.interaction` |
 | `StateChange` | `runtime.state_transition` |
 | authoritative transition application | `runtime.state_transition` |
 | `ResolvedOutcome` | `runtime.outcome` |
@@ -329,7 +287,39 @@ A shared interface or data shape is not automatically a separate module, but it 
 | presentation instructions | `presentation.adapter` |
 | blackboard display model and controls | `presentation.blackboard` |
 
-Ownership means the named contract controls the shape, validation rules, and compatibility expectations. Other modules may use the structure but must not silently redefine it.
+Ownership means the named contract controls the shape, validation rules, compatibility expectations, or behavioral rules named in the table. Other modules may consume the result but may not silently redefine it.
+
+### 8.1 Information boundary
+
+```text
+data.info_cards
+-> InfoCard schema
+
+data.information
+-> Soft / Hard classification and information state
+
+information.rules
+-> disclosure, withholding, hardening, reveal eligibility,
+   proposed information-state changes, and semantic signals
+```
+
+A Data Model must not be assigned behavior merely because the behavior concerns that data.
+
+### 8.2 ActionRequest boundary
+
+```text
+presentation.adapter
+-> translates player intent into a request
+
+runtime.action_request
+-> owns the generic routing-neutral ActionRequest structure
+
+specialized resolver
+-> accepts supported requests, validates its action class,
+   chooses participating modules, and coordinates consequence order
+```
+
+`resolver.interaction` may own `InteractionValidationResult`, but it does not own a universal `ValidationResult` unless a later shared contract explicitly establishes one.
 
 ---
 
@@ -337,17 +327,15 @@ Ownership means the named contract controls the shape, validation rules, and com
 
 A contract being required before a task begins does not mean its implementation must already exist.
 
-Example:
-
 ```text
 presentation.blackboard contract
--> must be Implementation Ready before Task 002 is reactivated
+-> Implementation Ready before Task 002 is reactivated
 
 presentation.blackboard implementation
 -> may be produced by Task 002
 ```
 
-The same rule applies to other Task 002 deliverables. Design must be ready before coding begins; implementation may then be created by the approved task.
+Design must be ready before coding begins; implementation may then be created by the approved task.
 
 ---
 
@@ -438,7 +426,7 @@ The same rule applies to other Task 002 deliverables. Design must be ready befor
 ## 2. Owns
 ## 3. Does Not Own
 ## 4. Accepted Action Types
-## 5. Action Request Inputs
+## 5. Accepted Request Types
 ## 6. Required Modules by Action Type
 ## 7. Optional Modules by Action Type
 ## 8. Modules Not Consulted by Action Type
@@ -505,12 +493,13 @@ Events report completed results. They do not become hidden owners of critical st
 ```text
 Content Definitions = what something is
 Runtime State = what is currently true
+Data Model = the portable shape of that truth
 Rule Module = how truth may change
 Resolver = which modules participate and in what order
 Presentation = how the result is shown
 ```
 
-A value is not automatically a module. Portable state must not contain Phaser scenes, sprites, cameras, containers, animation objects, physics bodies, DOM nodes, or event emitters.
+Portable state must not contain Phaser scenes, sprites, cameras, containers, animation objects, physics bodies, DOM nodes, or event emitters.
 
 ---
 
@@ -543,7 +532,7 @@ deferred integration
 
 ### Design Draft
 
-May contain unresolved mechanics. Do not implement unless an approved task defines a bounded temporary behavior.
+May contain unresolved mechanics. Do not implement unless an approved task defines bounded temporary behavior.
 
 ### Design Accepted
 
@@ -551,7 +540,7 @@ The concept and architecture relationship are approved. It may guide naming and 
 
 ### Implementation Ready
 
-The selected slice has clear purpose and ownership, one Primary Kind, explicit interfaces, state boundaries, dependencies, failure behavior, determinism, consequence participation, tests, and no blocking open questions.
+The selected slice has clear ownership, one Primary Kind, explicit interfaces, state boundaries, dependencies, failure behavior, determinism, consequence participation, tests, and no blocking open questions.
 
 ### Prototype Active
 
@@ -571,8 +560,8 @@ Before a module is named in an implementation task:
 - [ ] Activation Role explicit for the intended slice;
 - [ ] registry entry exists;
 - [ ] ownership is bounded;
+- [ ] data ownership is separated from behavior ownership;
 - [ ] shared structures have one owner;
-- [ ] profile is appropriate;
 - [ ] interfaces and state boundaries are explicit;
 - [ ] required dependencies and optional integrations are explicit;
 - [ ] missing-module behavior is explicit;
@@ -603,13 +592,12 @@ Before a module is named in an implementation task:
 ```text
 A module should be understandable without reading the whole game.
 A module has one Primary Kind.
-Architecture Role, Design Maturity, and activation fields answer different questions.
-Design Accepted does not mean Implementation Ready.
-The registry sets a Demo Default Activation.
+Data ownership and behavior ownership remain separate.
+The generic ActionRequest exists before specialized resolver selection.
+The registry sets Demo Default Activation.
 PROJECT_STATE records current production status.
 Resolver Contracts set action-specific participation.
 Shared structures have one owner.
-A Resolver combines modules without becoming all of them.
 A missing optional integration reduces behavior.
 A missing required module fails clearly.
 ```
