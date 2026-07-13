@@ -4,7 +4,7 @@
 
 Status: **Paused — Blocked by Module Definition**
 
-Do not hand this task to Codex and do not begin implementation until the prerequisites below are satisfied and Teddy explicitly reactivates the task.
+Do not hand this task to Codex and do not begin implementation until the full reactivation gate below is satisfied and Teddy explicitly reactivates the task.
 
 ---
 
@@ -12,38 +12,105 @@ Do not hand this task to Codex and do not begin implementation until the prerequ
 
 The original task correctly identified the intended first Phaser interaction slice, but it was written before the module registry and contract standard existed.
 
-Several participating modules are still Design Drafts. Implementing now would require Codex to invent BASED, DPA, Information, TIME, REP, HEAT, resolver, state-transition, or outcome behavior.
+Several required contracts remain Design Draft or Design Accepted. Implementing now would force Codex to invent BASED, DPA, Information, TIME, resolver, runtime, infrastructure, presentation, or optional social behavior.
 
 This task is preserved as the future Phaser foundation target. Its implementation details must be revised against accepted focused contracts before its status can return to `Ready for Codex`.
 
 ---
 
-## Reactivation Prerequisites
+## Reactivation Gate
 
-The selected thin slice requires sufficient contracts for:
+Every required contract below must be **Implementation Ready for the selected thin slice** before coding begins.
+
+### Required interaction contracts
 
 ```text
 interaction.dpa
 interaction.based
 data.information
+data.info_cards
 resource.time
 resolver.interaction
-runtime.state
-runtime.outcome
-runtime.state_transition
 ```
 
-Before reactivation:
+### Required runtime contracts
 
-- `interaction.dpa` must be Implementation Ready for the selected frame behavior.
-- `interaction.based` must be Implementation Ready for the selected test Vibes.
-- `data.information` must be Implementation Ready for the selected Soft / Hard Info behavior.
-- `resource.time` must be Implementation Ready for the selected action costs.
-- `resolver.interaction` must define accepted actions, participating modules, validation, consequence phases, transition policy, and outcome responsibility.
-- `runtime.state`, `runtime.outcome`, and `runtime.state_transition` must be Implementation Ready for the thin slice.
-- `social.rep` and `social.heat` must each be either Implementation Ready and included or explicitly excluded from the revised task.
+```text
+runtime.content_definitions
+runtime.state
+runtime.state_transition
+runtime.outcome
+```
 
-No Design Draft module may be implemented through invented behavior.
+### Required infrastructure contracts
+
+```text
+infra.ids
+infra.tests
+```
+
+### Required presentation contracts
+
+```text
+presentation.phaser
+presentation.adapter
+presentation.blackboard
+```
+
+A required contract is a design prerequisite. Its implementation may still be produced by this task after the contract is ready.
+
+Example:
+
+```text
+presentation.blackboard contract
+-> Implementation Ready before reactivation
+
+presentation.blackboard implementation
+-> produced by Task 002
+```
+
+### Conditional contracts
+
+`infra.random` is required only when the approved slice uses randomized gameplay truth. Otherwise, the revised task must explicitly declare a fully deterministic non-random path.
+
+`social.rep` and `social.heat` must each be either:
+
+```text
+Implementation Ready and included
+```
+
+or:
+
+```text
+explicitly excluded from the revised slice
+```
+
+No Design Draft or Design Accepted module may be implemented through invented behavior.
+
+---
+
+## Shared Structure Ownership
+
+The reactivated task must preserve these owners:
+
+| Shared structure or responsibility | Owning module |
+|---|---|
+| `InfoCard` schema | `data.info_cards` |
+| Soft / Hard information behavior | `data.information` |
+| `ContentDefinitions` | `runtime.content_definitions` |
+| `RuntimeState` | `runtime.state` |
+| `ActionRequest` | `resolver.interaction` |
+| `ValidationResult` | `resolver.interaction` |
+| `StateChange` | `runtime.state_transition` |
+| authoritative transition application | `runtime.state_transition` |
+| `ResolvedOutcome` | `runtime.outcome` |
+| stable identity rules | `infra.ids` |
+| controlled random source | `infra.random` |
+| test harness and deterministic acceptance rules | `infra.tests` |
+| presentation instructions | `presentation.adapter` |
+| blackboard display model and controls | `presentation.blackboard` |
+
+A shared interface does not need to become its own module, but Codex may not silently redefine an interface owned by another contract.
 
 ---
 
@@ -79,22 +146,39 @@ The reactivated task must also list only the focused module references required 
 
 ---
 
+## Included and Excluded Module Declaration
+
+Before Codex receives the task, the revised task must include a table like:
+
+| Module | Slice status | Reason |
+|---|---|---|
+| `resource.time` | Required | Every approved interaction spends minutes. |
+| `social.rep` | Included or Excluded | Must be decided before reactivation. |
+| `social.heat` | Included or Excluded | Must be decided before reactivation. |
+| `infra.random` | Included or Excluded | Include only if gameplay truth is randomized. |
+
+Every optional or conditional module must be explicitly included or excluded. Silence is not a valid activation decision.
+
+---
+
 ## Report Before Coding
 
 After reactivation and before implementation, Codex must report:
 
-1. Its understanding of the approved task.
-2. Exact files it will read.
-3. Exact files it plans to create or modify.
-4. The portable simulation versus Phaser presentation boundary.
-5. The selected modules and their activation roles for each test action.
-6. The proposed portable TypeScript types.
-7. The responsibility of `InteractionResolver`.
-8. The responsibility of each participating module.
-9. The exact consequence order.
-10. The tests it will create.
-11. Risks, unresolved conflicts, or missing information.
-12. The smallest safe implementation plan.
+1. its understanding of the approved task;
+2. exact files it will read;
+3. exact files it plans to create or modify;
+4. the portable simulation versus Phaser presentation boundary;
+5. the selected modules and action-specific participation;
+6. the included/excluded module declaration;
+7. the shared structure ownership map;
+8. the proposed portable TypeScript types;
+9. the responsibility of `InteractionResolver`;
+10. the responsibility of each participating module;
+11. the exact consequence order;
+12. the tests it will create;
+13. risks, unresolved conflicts, or missing information;
+14. the smallest safe implementation plan.
 
 Codex must wait for Teddy's approval after this report.
 
@@ -121,7 +205,7 @@ PhaserProject/
     simulation/
       runtimeState.ts
       stateTransition.ts
-      seededRandom.ts
+      seededRandom.ts          # only when infra.random is included
       systems/
         [only approved modules]
     resolution/
@@ -136,7 +220,7 @@ PhaserProject/
     interactionResolver.test.ts
 ```
 
-The exact filenames may change in the approved Codex report, but the responsibility boundaries may not.
+The exact filenames may change in the approved Codex report, but responsibility boundaries and shared owners may not.
 
 ---
 
@@ -149,7 +233,7 @@ The future slice should remain small:
 - one location ID;
 - one approved Soft Info example;
 - one approved Hard Info example or hardening path;
-- one run seed when controlled randomness is used;
+- one run seed only when controlled randomness is included;
 - one simple requested result;
 - only the state values required by approved participating modules.
 
@@ -161,7 +245,7 @@ Use stable string IDs. Do not use Phaser objects as identity.
 
 The browser scene should allow only the frames and Vibes approved by the focused contracts.
 
-The future `ActionRequest` should contain only approved fields, potentially including:
+The future `ActionRequest`, owned by `resolver.interaction`, should contain only approved fields, potentially including:
 
 ```text
 actorId
@@ -182,18 +266,18 @@ No UI choice may directly mutate simulation state.
 
 ## Portable Types
 
-The reactivated task should define small plain-data types for the approved slice, expected to include:
+The reactivated task should implement the approved shared structures according to their owning contracts. Portable types must contain no Phaser objects.
 
-- `ContentDefinitions`
-- `RuntimeState`
-- `ActionRequest`
-- `ValidationResult`
-- `StateChange`
-- `ResolvedOutcome`
-- semantic outcome signals
-- presentation instructions produced by the Presentation Adapter
+Expected structures include:
 
-Portable types must contain no Phaser objects.
+- `ContentDefinitions`;
+- `RuntimeState`;
+- `ActionRequest`;
+- `ValidationResult`;
+- `StateChange`;
+- `ResolvedOutcome`;
+- semantic outcome signals;
+- presentation instructions produced by the Presentation Adapter.
 
 ---
 
@@ -201,9 +285,9 @@ Portable types must contain no Phaser objects.
 
 `InteractionResolver` may:
 
-1. receive current state, content, an ActionRequest, and controlled randomness when approved;
+1. receive current state, content, an ActionRequest, and controlled randomness when included;
 2. validate the request;
-3. identify required and optional modules by action type;
+3. identify Required, Optional Integration, and Not Consulted modules by action type;
 4. call modules in the documented order;
 5. combine proposed changes;
 6. resolve conflicts according to its contract;
@@ -220,13 +304,13 @@ It must not contain every internal BASED, Info, TIME, REP, HEAT, inventory, miss
 
 The exact sequence must come from the approved Resolver Contract.
 
-The future task must still preserve these principles:
+The future task must preserve:
 
 ```text
 validate before calculation
 calculate before transition
 apply one authoritative transition
-process secondary checks in a documented order
+process secondary checks in documented order
 build one explicit outcome
 translate semantic signals after resolution
 restore input last
@@ -238,15 +322,15 @@ Real-time animation duration must not determine in-world TIME cost.
 
 ## Runtime Blackboard
 
-The future blackboard should display only the approved thin-slice information, including:
+The future blackboard should display only approved thin-slice information.
 
 ### Current state
 
-- run seed when relevant;
 - current day and minute when TIME participates;
 - player and NPC IDs;
 - current location;
 - approved information state;
+- run seed when randomness participates;
 - REP or HEAT only when those modules are included.
 
 ### Selected request
@@ -260,8 +344,7 @@ The future blackboard should display only the approved thin-slice information, i
 
 - resolver;
 - validation result;
-- modules consulted;
-- modules skipped or excluded;
+- modules Required, Optional, Not Consulted, or Excluded;
 - primary result;
 - proposed and applied changes;
 - ordered secondary checks;
@@ -282,16 +365,19 @@ The future blackboard should display only the approved thin-slice information, i
 
 After reactivation, test at minimum:
 
-1. Identical state, request, and seed produce identical outcomes when randomness participates.
-2. DPA and BASED remain separate fields and responsibilities.
-3. Required-module absence fails clearly without a state transition.
-4. Optional-module absence follows the documented reduced path.
-5. Modules return bounded calculations or proposals.
-6. State changes occur through one documented transition.
-7. TIME uses rule data rather than animation duration.
-8. Portable state and outcomes contain no Phaser objects.
-9. Semantic signals occur only after authoritative resolution.
-10. Reset restores the original test state.
+1. identical state, request, and seed produce identical outcomes when randomness participates;
+2. a non-random slice remains deterministic without `infra.random`;
+3. DPA and BASED remain separate fields and responsibilities;
+4. required-module absence fails clearly without a state transition;
+5. optional-module absence follows the documented reduced path;
+6. excluded and Not Consulted modules are not invoked;
+7. modules return bounded calculations or proposals;
+8. shared structures match their owning contracts;
+9. state changes occur through one documented transition;
+10. TIME uses rule data rather than animation duration;
+11. portable state and outcomes contain no Phaser objects;
+12. semantic signals occur only after authoritative resolution;
+13. reset restores the original test state.
 
 ---
 
@@ -311,7 +397,8 @@ Do not:
 - add live LLM/API calls;
 - create a universal manager;
 - hide simulation logic in Phaser scenes or event listeners;
-- invent rules from Design Draft documents.
+- invent rules from Design Draft or Design Accepted documents;
+- create duplicate ownership for shared structures.
 
 ---
 
@@ -319,13 +406,16 @@ Do not:
 
 Task 002 may return to `Ready for Codex` only when:
 
-- [ ] the System Registry identifies every participating module;
-- [ ] each required module is Implementation Ready for the selected slice;
+- [ ] every required interaction contract is Implementation Ready;
+- [ ] every required runtime contract is Implementation Ready;
+- [ ] every required infrastructure contract is Implementation Ready;
+- [ ] every required presentation contract is Implementation Ready;
 - [ ] REP and HEAT are each included or explicitly excluded;
-- [ ] the Resolver Contract defines action-specific activation and order;
-- [ ] the runtime and outcome contracts are explicit;
+- [ ] randomness is included with an Implementation Ready contract or explicitly excluded;
+- [ ] every shared structure has one recorded owner;
+- [ ] the Resolver Contract defines action-specific Required, Optional Integration, and Not Consulted participation;
 - [ ] the task lists exact focused references;
-- [ ] acceptance criteria match the approved module set;
+- [ ] acceptance criteria match the final approved module set;
 - [ ] Teddy explicitly authorizes reactivation.
 
 ---
