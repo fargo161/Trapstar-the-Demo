@@ -1,6 +1,6 @@
 # Trapstar the Demo
 
-*Trapstar the Demo* is a bounded, replayable 2D social-crime investigation being developed as a seven-week browser prototype in **Phaser 3.90 + TypeScript**.
+*Trapstar the Demo* is a bounded, replayable 2D social-crime investigation built as a seven-week browser prototype in **Phaser 3.90 + TypeScript**.
 
 The player has three in-game days to resolve the **Stolen Package** case inside one police-monitored city block involving two factions, a limited NPC cast, shifting information, resource pressure, and bounded randomized roles.
 
@@ -9,48 +9,34 @@ The player has three in-game days to resolve the **Stolen Package** case inside 
 - **SEN** — Structured, Emergent, Negotiated world-state philosophy.
 - **Deal / Pressure / Ask** — the recurring strategic choice frame. DPA is not an ordered loop.
 - **BASED** — the trait and Vibe language that defines how an action is expressed.
-- **Contained complexity** — bounded modules own focused rules; specialized resolvers coordinate their intersections.
+- **Contained complexity** — small systems own bounded rules; specialized resolvers coordinate their intersections.
 
 ```text
 DPA chooses the strategic frame.
 BASED defines the manner of action.
-Resolvers coordinate the required modules.
-Rule modules calculate bounded consequences.
+Resolvers coordinate the required systems.
+Independent systems calculate bounded consequences.
 Runtime state records authoritative truth.
 Phaser presents the resolved result.
 ```
-
-## Current phase
-
-The project is currently defining its modular architecture and focused system contracts before gameplay implementation begins.
-
-There is no active implementation task. The preserved Phaser foundation task is paused until every required interaction, runtime, infrastructure, and presentation contract is ready for its selected slice. Conditional modules such as REP, HEAT, and seeded randomness must be explicitly included or excluded.
 
 ## Current technical direction
 
 Phaser 3.90 is the committed demo engine, not the guaranteed full-project engine.
 
-The simulation beneath Phaser is designed around portable content definitions, stable IDs, authoritative runtime state, seeded randomness, bounded rule modules, explicit action resolvers, ordered state transitions, resolved outcomes, and engine-light tests.
+The simulation beneath Phaser is designed around portable content definitions, stable IDs, authoritative runtime state, seeded randomness, independent rule systems, explicit action resolvers, ordered state transitions, resolved outcomes, and engine-light tests.
 
 ```text
 Commands change the world.
 Events report what changed.
 ```
 
-## Three separate status questions
-
-- **Demo Default Activation** — recorded in the System Registry; describes the intended course-demo architecture.
-- **Current production status** — recorded in `PROJECT_STATE.md`; describes what work is active, paused, blocked, or unscheduled now.
-- **Action-specific participation** — recorded in Resolver Contracts; describes which modules are required, optional, or not consulted for one action.
-
 ## Read first
 
-1. [`PROJECT_STATE.md`](PROJECT_STATE.md) — current phase, blockers, and documentation priorities.
+1. [`PROJECT_STATE.md`](PROJECT_STATE.md) — current command brief and active priorities.
 2. [`docs/Trapstar_Master_System_Architecture.md`](docs/Trapstar_Master_System_Architecture.md) — canonical high-level architecture truth.
-3. [`docs/architecture/Trapstar_System_Registry.md`](docs/architecture/Trapstar_System_Registry.md) — module identity, classification, maturity, Demo Default Activation, and authority.
-4. [`docs/architecture/Trapstar_Module_Contract_Standard.md`](docs/architecture/Trapstar_Module_Contract_Standard.md) — required contract profiles, activation scopes, shared-type ownership, and module-boundary rules.
-5. [`codex_tasks/TASK_TEMPLATE.md`](codex_tasks/TASK_TEMPLATE.md) — required structure for bounded Codex work orders.
-6. [`codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md`](codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md) — preserved future Phaser task, currently paused.
+3. [`codex_tasks/TASK_TEMPLATE.md`](codex_tasks/TASK_TEMPLATE.md) — required structure for bounded Codex work orders.
+4. [`codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md`](codex_tasks/TASK_002_PHASER_FOUNDATION_AND_RUNTIME_BLACKBOARD.md) — next active implementation task.
 
 ## Repository layout
 
@@ -61,8 +47,8 @@ agent_specs/          Focused runtime or agent contracts
 design_packets/       Implementation-ready design packets
 playtest_logs/        Test observations and iteration records
 course_deliverables/  Course-facing artifacts
-art/                   Source and reference art
-PhaserProject/         Browser-demo implementation root
+art/                  Source and reference art
+PhaserProject/        Browser-demo implementation root
 ```
 
-The repository is the canonical source of truth. Gameplay code should be produced from accepted focused contracts through bounded Codex tasks rather than improvised directly from the master architecture.
+The repository is the canonical source of truth. Gameplay code should be produced from accepted documents through bounded Codex tasks rather than improvised directly from the master architecture.
